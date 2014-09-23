@@ -95,26 +95,14 @@ describe("PackageManagerBackend", () => {
                         }
                     },
                     postProcessForDependency: (recipe, dep, content) => {
-                        var body:string = content.toString("utf8");
                         var reference = /\/\/\/\s+<reference\s+path=["']([^"']*)["']\s*\/>/;
+                        var body:string = content.toString("utf8");
                         body
                             .split("\n")
                             .map(line => line.match(reference))
                             .filter(matches => !!matches)
-                            .map(matches => {
-                                return matches[1];
-                            })
-                            .forEach(ref => {
-                                var depName = path.join(path.dirname(dep.name), ref);
-                                if (!!recipe.dependencies[depName]) {
-                                    return;
-                                }
-                                recipe.dependencies[depName] = {
-                                    repo: dep.repo,
-                                    ref: dep.ref,
-                                    path: path.join(path.dirname(dep.path), ref),
-                                    name: depName
-                                };
+                            .forEach(matches => {
+                                pmb.pushAdditionalDependency(recipe, dep, matches[1]);
                             });
                     }
                 })

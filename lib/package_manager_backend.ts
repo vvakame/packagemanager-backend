@@ -1,4 +1,5 @@
 import fs = require("fs");
+import path = require("path");
 import mkdirp = require("mkdirp");
 
 /* tslint:disable:variable-name */
@@ -13,6 +14,7 @@ import deepClone = utils.deepClone;
 import IOptions = PackageManagerBackend.IOptions;
 import IRecipe = PackageManagerBackend.IRecipe;
 import IResult = PackageManagerBackend.IResult;
+import IDependency = PackageManagerBackend.IDependency;
 
 class PackageManagerBackend {
     constructor(public opts:IOptions) {
@@ -97,6 +99,19 @@ class PackageManagerBackend {
             });
             return Promise.all(promises).then(()=> this.processUnresolvedDependencies(recipe, repos, result));
         });
+    }
+
+    pushAdditionalDependency(recipe:IRecipe, baseDep:IDependency, relativePath:string) {
+        var depName = path.join(path.dirname(baseDep.name), relativePath);
+        if (!!recipe.dependencies[depName]) {
+            return;
+        }
+        recipe.dependencies[depName] = {
+            repo: baseDep.repo,
+            ref: baseDep.ref,
+            path: path.join(path.dirname(baseDep.path), relativePath),
+            name: depName
+        };
     }
 }
 
