@@ -72,12 +72,12 @@ class Repo {
         }
     }
 
-    resolve():Promise<Repo> {
+    resolve():Promise<void> {
         if (!this.targetDir) {
             return Promise.reject(new Error());
         }
 
-        return this.gitFetchAll().then(() => this);
+        return this.gitFetchAll();
     }
 
     gitFetchAll():Promise<void> {

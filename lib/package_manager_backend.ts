@@ -30,7 +30,8 @@ class PackageManagerBackend {
     }
 
     fetch(url:string):Promise<Repo> {
-        return new Repo(this, url).resolve();
+        var repo = new Repo(this, url);
+        return repo.resolve().then(()=> repo);
     }
 
     getByRecipe(recipe:IRecipe):Promise<IResult> {
@@ -58,7 +59,7 @@ class PackageManagerBackend {
     }
 
     processUnresolvedDependencies(recipe:IRecipe, repos:{[targetDir: string]: Repo; }, result:IResult) {
-        var resolvePromises:Promise<Repo>[] = [];
+        var resolvePromises:Promise<void>[] = [];
         var needNext = false;
         Object.keys(recipe.dependencies).forEach(depName => {
             if (result.dependencies[depName]) {

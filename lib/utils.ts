@@ -1,7 +1,11 @@
+var debugFlag = false;
+
 export function debug(...args:any[]) {
     "use strict";
 
-    console.log.apply(console, args);
+    if (debugFlag) {
+        console.log.apply(console, args);
+    }
 }
 
 export function deepClone(obj:any) {

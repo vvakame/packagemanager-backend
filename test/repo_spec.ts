@@ -6,9 +6,11 @@ import path = require("path");
 import assert = require("power-assert");
 
 describe("Repo", () => {
+    var rootDir = path.resolve(__dirname, "../test-repository");
+
     describe("#constructor", ()=> {
         it("can parse http style url", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: "foobar"});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "https://github.com/vvakame/dotfiles.git");
 
             assert(repo.urlInfo);
@@ -16,7 +18,7 @@ describe("Repo", () => {
         });
 
         it("can parse ssh style url", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: "foobar"});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
             assert(repo.sshInfo);
@@ -68,7 +70,7 @@ describe("Repo", () => {
 
     describe("#resolve", ()=> {
         it("succeed if this.targetDir is specified", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: "~/foobar"});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
             repo.gitFetchAll = () => Promise.resolve(<any>null);
@@ -76,7 +78,7 @@ describe("Repo", () => {
         });
 
         it("failed if this.targetDir is not specified", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: "~/foobar"});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
             repo.targetDir = null;
 
@@ -90,7 +92,7 @@ describe("Repo", () => {
 
     describe("#gitFetchAll", ()=> {
         it("can fetch from remote repo", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: path.resolve(__dirname, "../test-repository")});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
             return repo.gitFetchAll().then(()=> {
@@ -100,7 +102,7 @@ describe("Repo", () => {
         });
 
         it("can'n fetch from invalid remote repo", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: path.resolve(__dirname, "../test-repository")});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/notExistsForever.git");
 
             return repo.gitFetchAll().then(()=> {
@@ -110,7 +112,7 @@ describe("Repo", () => {
         });
 
         it("can'n fetch from unresolved host", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: path.resolve(__dirname, "../test-repository")});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@not-exists.vvakame.net:hostNotExistsForever.git");
 
             return repo.gitFetchAll().then(()=> {
@@ -123,7 +125,6 @@ describe("Repo", () => {
 
     describe("#buildCommand", ()=> {
         it("can construct command. it include --git-dir option", ()=> {
-            var rootDir = path.resolve(__dirname, "../test-repository");
             var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
@@ -134,7 +135,7 @@ describe("Repo", () => {
 
     describe("#open", ()=> {
         it("can open fs-git", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: path.resolve(__dirname, "../test-repository")});
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
             return repo.open("master").then(fs=> {
