@@ -57,10 +57,10 @@ class PackageManagerBackend {
             dependencies: {}
         };
 
-        return this.processUnresolvedDependencies(recipe, repos, result);
+        return this.resolveDependencies(recipe, repos, result);
     }
 
-    processUnresolvedDependencies(recipe:IRecipe, repos:{[targetDir: string]: Repo; }, result:IResult) {
+    resolveDependencies(recipe:IRecipe, repos:{[targetDir: string]: Repo; }, result:IResult) {
         var resolvePromises:Promise<void>[] = [];
         var needNext = false;
         Object.keys(recipe.dependencies).forEach(depName => {
@@ -97,7 +97,7 @@ class PackageManagerBackend {
                     depResult.error = error;
                 });
             });
-            return Promise.all(promises).then(()=> this.processUnresolvedDependencies(recipe, repos, result));
+            return Promise.all(promises).then(()=> this.resolveDependencies(recipe, repos, result));
         });
     }
 
