@@ -21,7 +21,7 @@ import debug = utils.debug;
 class Repo {
     targetDir:string;
     networkConnectivity:boolean;
-    fetchFailed:boolean;
+    fetchError:string;
 
     urlInfo:_url.Url;
     sshInfo:ISSHInfo;
@@ -30,7 +30,7 @@ class Repo {
         var urlInfo = _url.parse(this.url);
         if (urlInfo.protocol) {
             this.urlInfo = urlInfo;
-            this.resolveTarget();
+            this.resolveTargetDir();
             return;
         }
 
@@ -41,15 +41,19 @@ class Repo {
                 hostname: matches[2],
                 path: matches[3]
             };
-            this.resolveTarget();
+            this.resolveTargetDir();
             return;
         }
 
         // TODO files (zip etc...), url
     }
 
-    resolveTarget() {
-        var homeDir = process.env.HOME || process.env.USERPROFILE;
+    getHomeDir():string {
+        return process.env.HOME || process.env.USERPROFILE;
+    }
+
+    resolveTargetDir() {
+        var homeDir = this.getHomeDir();
         var containsHomeDir = this.backend.opts.rootDir.indexOf("~/") === 0;
         if (this.urlInfo) {
             // e.g. https://github.com/borisyankov/DefinitelyTyped.git
@@ -103,7 +107,7 @@ class Repo {
                     }
                     debug("exec command", command);
                     child_process.exec(command, (error, stdout, stderr)=> {
-                        this.fetchFailed = !!error;
+                        this.fetchError = error ? stderr.toString("utf8") : null;
                         resolve();
                     });
                 } else {

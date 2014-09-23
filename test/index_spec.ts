@@ -11,6 +11,9 @@ import path = require("path");
 import _pmb = require("../lib/index");
 import PackageManagerBackend = _pmb.PackageManagerBackend;
 
+import repoSpec = require("./repo_spec");
+repoSpec;
+
 describe("package manager backend", () => {
     it("can gitFetchAll & open with ssh", ()=> {
         var pmb = new PackageManagerBackend({rootDir: "~/.pmb-test"});
