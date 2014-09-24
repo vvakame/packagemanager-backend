@@ -14,11 +14,20 @@ describe("PackageManagerBackend", () => {
 
             assert(fs.statSync(rootDir).isDirectory());
         });
+
+        it("try offline first", ()=> {
+            new PackageManagerBackend({
+                rootDir: rootDir,
+                offlineFirst: true
+            });
+
+            assert(fs.statSync(rootDir).isDirectory());
+        });
     });
 
     describe("#fetch", ()=> {
         it("can git fetch --all & fs-git open", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: rootDir});
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
             return pmb
                 .fetch("git@github.com:vvakame/fs-git.git")
                 .then(repo => {
@@ -33,7 +42,7 @@ describe("PackageManagerBackend", () => {
 
     describe("#getByRecipe", ()=> {
         it("can get file contents", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: rootDir});
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
             return pmb
                 .getByRecipe({
                     baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
@@ -70,7 +79,7 @@ describe("PackageManagerBackend", () => {
                     Object.keys(result.dependencies).forEach(depName=> {
                         var dep = result.dependencies[depName];
                         assert(dep.repo);
-                        assert(dep.repo.networkConnectivity);
+                        // assert(dep.repo.networkConnectivity); // offlineFirst
                         assert(dep.repo.fetchError == null);
                         assert(typeof dep.content === "string");
                     });
@@ -78,7 +87,7 @@ describe("PackageManagerBackend", () => {
         });
 
         it("with postProcessForDependency", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: rootDir});
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
             return pmb
                 .getByRecipe({
                     baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
@@ -132,7 +141,7 @@ describe("PackageManagerBackend", () => {
                     Object.keys(result.dependencies).forEach(depName=> {
                         var dep = result.dependencies[depName];
                         assert(dep.repo);
-                        assert(dep.repo.networkConnectivity);
+                        // assert(dep.repo.networkConnectivity); // offlineFirst
                         assert(dep.repo.fetchError == null);
                         assert(typeof dep.content === "string");
                     });

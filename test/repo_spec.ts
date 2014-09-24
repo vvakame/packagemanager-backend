@@ -95,7 +95,10 @@ describe("Repo", () => {
             var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
+            assert(!repo.alreadyTryFetchAll);
+
             return repo.gitFetchAll().then(()=> {
+                assert(repo.alreadyTryFetchAll === true);
                 assert(repo.networkConnectivity === true);
                 assert(repo.fetchError == null);
             });
@@ -105,7 +108,10 @@ describe("Repo", () => {
             var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@github.com:vvakame/notExistsForever.git");
 
+            assert(!repo.alreadyTryFetchAll);
+
             return repo.gitFetchAll().then(()=> {
+                assert(repo.alreadyTryFetchAll === true);
                 assert(repo.networkConnectivity === true);
                 assert(repo.fetchError != null);
             });
@@ -115,9 +121,12 @@ describe("Repo", () => {
             var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb, "git@not-exists.vvakame.net:hostNotExistsForever.git");
 
+            assert(!repo.alreadyTryFetchAll);
+
             return repo.gitFetchAll().then(()=> {
                 throw new Error();
             }, ()=> {
+                assert(repo.alreadyTryFetchAll === true);
                 assert(repo.networkConnectivity === false);
             });
         });

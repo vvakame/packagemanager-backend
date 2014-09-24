@@ -120,6 +120,7 @@ module PackageManagerBackend {
 
     export interface IOptions {
         rootDir: string;
+        offlineFirst?: boolean;
     }
 
     export interface ISSHInfo {

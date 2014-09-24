@@ -4,7 +4,6 @@ package manager backend.
 
 TODO
 
- * offline first! support
  * file url support
  * file search
    * grep by extention

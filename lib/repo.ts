@@ -22,6 +22,7 @@ class Repo {
     targetDir:string;
     networkConnectivity:boolean;
     fetchError:string;
+    alreadyTryFetchAll:boolean;
 
     urlInfo:_url.Url;
     sshInfo:ISSHInfo;
@@ -76,8 +77,11 @@ class Repo {
         if (!this.targetDir) {
             return Promise.reject(new Error());
         }
-
-        return this.gitFetchAll();
+        if (this.backend.opts.offlineFirst && fs.existsSync(this.targetDir)) {
+            return Promise.resolve(null);
+        } else {
+            return this.gitFetchAll();
+        }
     }
 
     gitFetchAll():Promise<void> {
@@ -85,6 +89,8 @@ class Repo {
             throw new Error("targetDir is undefined");
         }
         return new Promise((resolve:(value?:any)=>void, reject:(error:any)=>void)=> {
+            this.alreadyTryFetchAll = true;
+
             // check network connectivity
             var hostname:string;
             if (this.urlInfo) {
@@ -128,7 +134,15 @@ class Repo {
     }
 
     open(ref:string):Promise<fsgit.FSGit> {
-        return fsgit.open(this.targetDir, ref);
+        return fsgit.open(this.targetDir, ref).catch(error=> {
+            if (this.alreadyTryFetchAll) {
+                return Promise.reject(error);
+            } else {
+                return this.gitFetchAll().then(()=> {
+                    return this.open(ref);
+                });
+            }
+        });
     }
 }
 
