@@ -3,7 +3,6 @@
 /// <reference path="../typings/node/node.d.ts" />
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="../typings/mkdirp/mkdirp.d.ts" />
-/// <reference path="../typings/request/request.d.ts" />
 
 try {
     // optional

@@ -26,32 +26,6 @@ describe("Repo", () => {
         });
     });
 
-    describe("#checkUrlInfo", ()=> {
-        it("can detect git format", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: rootDir});
-            var repo = new Repo(pmb, "https://github.com/vvakame/fs-git.git");
-            return repo.checkUrlInfo().then(type => {
-                assert(type === Repo.Type.Git);
-            });
-        });
-
-        it("can detect zip format", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: rootDir});
-            var repo = new Repo(pmb, "https://github.com/vvakame/fs-git/archive/0.1.0.zip");
-            return repo.checkUrlInfo().then(type => {
-                assert(type === Repo.Type.Zip);
-            });
-        });
-
-        it("can detect gzip format", ()=> {
-            var pmb = new PackageManagerBackend({rootDir: rootDir});
-            var repo = new Repo(pmb, "https://github.com/vvakame/fs-git/archive/0.1.0.tar.gz");
-            return repo.checkUrlInfo().then(type => {
-                assert(type === Repo.Type.GZip);
-            });
-        });
-    });
-
     describe("#resolveTargetDir", ()=> {
         it("can solve targetDir (exclude home dir) by http url", ()=> {
             var pmb = new PackageManagerBackend({rootDir: "/tmp/foobar"});

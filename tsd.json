@@ -1,30 +1,24 @@
 {
-    "version": "v4",
-    "repo": "borisyankov/DefinitelyTyped",
-    "ref": "master",
-    "path": "typings",
-    "bundle": "typings/bundle.d.ts",
-    "installed": {
-        "es6-promise/es6-promise.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        },
-        "node/node.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        },
-        "mkdirp/mkdirp.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        },
-        "request/request.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        },
-        "form-data/form-data.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        },
-        "mocha/mocha.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        },
-        "assert/assert.d.ts": {
-            "commit": "eef872b96a458fde22571def5a368a867de9901b"
-        }
-    }
+	"version": "v4",
+	"repo": "borisyankov/DefinitelyTyped",
+	"ref": "master",
+	"path": "typings",
+	"bundle": "typings/bundle.d.ts",
+	"installed": {
+		"es6-promise/es6-promise.d.ts": {
+			"commit": "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+		},
+		"node/node.d.ts": {
+			"commit": "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+		},
+		"mkdirp/mkdirp.d.ts": {
+			"commit": "b0b4af1223f4f9449012688fa0c18f20cc3267e7"
+		},
+		"mocha/mocha.d.ts": {
+			"commit": "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+		},
+		"assert/assert.d.ts": {
+			"commit": "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+		}
+	}
 }
