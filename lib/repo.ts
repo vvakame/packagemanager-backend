@@ -27,7 +27,7 @@ class Repo {
     urlInfo:_url.Url;
     sshInfo:ISSHInfo;
 
-    constructor(public backend:PackageManagerBackend, public url:string) {
+    constructor(public opts:PackageManagerBackend.IOptions, public url:string) {
         var urlInfo = _url.parse(this.url);
         if (urlInfo.protocol) {
             this.urlInfo = urlInfo;
@@ -55,7 +55,7 @@ class Repo {
 
     resolveTargetDir() {
         var homeDir = this.getHomeDir();
-        var containsHomeDir = this.backend.opts.rootDir.indexOf("~/") === 0;
+        var containsHomeDir = this.opts.rootDir.indexOf("~/") === 0;
         var endWithDotGit = /\.git$/.test(this.url);
         var type = "git";
         var baseDir:string;
@@ -63,9 +63,9 @@ class Repo {
         var targetPath:string;
 
         if (containsHomeDir) {
-            baseDir = path.resolve(homeDir, this.backend.opts.rootDir.substr(2));
+            baseDir = path.resolve(homeDir, this.opts.rootDir.substr(2));
         } else {
-            baseDir = this.backend.opts.rootDir;
+            baseDir = this.opts.rootDir;
         }
         if (this.urlInfo) {
             // e.g. https://github.com/borisyankov/DefinitelyTyped.git
@@ -86,7 +86,7 @@ class Repo {
         if (!this.targetDir) {
             return Promise.reject(new Error());
         }
-        if (this.backend.opts.offlineFirst && fs.existsSync(this.targetDir)) {
+        if (this.opts.offlineFirst && fs.existsSync(this.targetDir)) {
             return Promise.resolve(null);
         } else {
             return this.gitFetchAll();

@@ -1,6 +1,8 @@
 import fs = require("fs");
 import path = require("path");
 import mkdirp = require("mkdirp");
+import fsgit = require("fs-git");
+import minimatch = require("minimatch");
 
 /* tslint:disable:variable-name */
 var Promise:typeof Promise = require("ypromise");
@@ -12,6 +14,7 @@ import utils = require("./utils");
 import deepClone = utils.deepClone;
 
 import IOptions = PackageManagerBackend.IOptions;
+import ISearchOptions = PackageManagerBackend.ISearchOptions;
 import IRecipe = PackageManagerBackend.IRecipe;
 import IResult = PackageManagerBackend.IResult;
 import IDependency = PackageManagerBackend.IDependency;
@@ -31,9 +34,65 @@ class PackageManagerBackend {
         }
     }
 
-    fetch(url:string):Promise<Repo> {
-        var repo = new Repo(this, url);
+    fetch(url:string, opts = this.opts):Promise<Repo> {
+        var repo = new Repo(opts, url);
         return repo.resolve().then(()=> repo);
+    }
+
+    search(opts:ISearchOptions):Promise<fsgit.IFileInfo[]> {
+        opts = utils.deepClone(opts);
+        opts.repos = opts.repos || utils.deepClone(this.opts.repos) || [];
+        if (opts.repos.length === 0) {
+            return Promise.reject(new Error("repos are required"));
+        }
+        opts.repos.forEach(repo => {
+            repo.ref = repo.ref || "master";
+        });
+        opts.globPatterns = opts.globPatterns || [];
+        if (opts.globPattern != null) {
+            opts.globPatterns.unshift(opts.globPattern);
+        }
+        opts.offlineFirst = opts.offlineFirst != null ? opts.offlineFirst : this.opts.offlineFirst;
+
+        var resultList:fsgit.IFileInfo[] = [];
+        return Promise.all(opts.repos.map(repoInfo=> {
+            return this.fetch(repoInfo.url, utils.extend({}, this.opts, {offlineFirst: opts.offlineFirst}))
+                .then(repo=> repo.open(repoInfo.ref))
+                .then(fs=> fs.filelist())
+                .then(filelist=> {
+                    filelist.forEach(fileInfo => resultList.push(fileInfo));
+                });
+        })).then(()=> {
+            if (opts.globPatterns.length === 0) {
+                return resultList;
+            }
+            var filteredList:fsgit.IFileInfo[] = [];
+            opts.globPatterns.forEach(pattern=> {
+                var exclusion = pattern.indexOf("!") === 0;
+                var match = minimatch.filter(exclusion ? pattern.substr(1) : pattern);
+                resultList.forEach(fileInfo => {
+                    if (match(fileInfo.path)) {
+                        var index = filteredList.indexOf(fileInfo);
+                        if (!exclusion && index === -1) {
+                            filteredList.push(fileInfo);
+                        } else if (exclusion && index !== -1) {
+                            filteredList.splice(index, 1);
+                        }
+                    }
+                });
+            });
+            return filteredList;
+        }).then((resultList:fsgit.IFileInfo[])=> {
+            if (!opts.regexpPattern) {
+                return resultList;
+            }
+            return resultList.filter(fileInfo => opts.regexpPattern.test(fileInfo.path));
+        }).then((resultList:fsgit.IFileInfo[])=> {
+            if (!opts.filter) {
+                return resultList;
+            }
+            return resultList.filter(fileInfo => opts.filter(fileInfo));
+        });
     }
 
     getByRecipe(recipe:IRecipe):Promise<IResult> {
@@ -69,7 +128,7 @@ class PackageManagerBackend {
             }
             needNext = true;
             var dep = recipe.dependencies[depName];
-            var repo = new Repo(this, dep.repo);
+            var repo = new Repo(this.opts, dep.repo);
             if (!repos[repo.targetDir]) {
                 repos[repo.targetDir] = repo;
                 resolvePromises.push(repo.resolve());
@@ -121,12 +180,22 @@ module PackageManagerBackend {
     export interface IOptions {
         rootDir: string;
         offlineFirst?: boolean;
+        repos?:IRepository[];
     }
 
     export interface ISSHInfo {
         user:string;
         hostname: string;
         path: string;
+    }
+
+    export interface ISearchOptions {
+        repos?:IRepository[];
+        offlineFirst?: boolean;
+        globPattern?:string;
+        globPatterns?:string[];
+        regexpPattern?:RegExp;
+        filter?:(fileInfo:fsgit.IFileInfo)=>boolean;
     }
 
     export interface IRecipe {
@@ -148,6 +217,11 @@ module PackageManagerBackend {
         repo: Repo;
         error?: any;
         content?: Buffer;
+    }
+
+    export interface IRepository {
+        url: string;
+        ref?: string;
     }
 
     export interface IDependency {

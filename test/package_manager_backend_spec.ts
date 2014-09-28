@@ -40,6 +40,103 @@ describe("PackageManagerBackend", () => {
         });
     });
 
+    describe("#search", ()=> {
+        it("can show file list with repos parameter", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            var opts:PackageManagerBackend.ISearchOptions = {
+                repos: [{
+                    url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                }]
+            };
+            return pmb.search(opts)
+                .then(fileList=> {
+                    assert(fileList.length !== 0);
+                    // not filtered
+                    var excludePatterns = [/^notExsitsPattern$/];
+                    fileList.forEach(fileInfo => {
+                        assert(excludePatterns.every(regexp => !regexp.test(fileInfo.path)));
+                    });
+                });
+        });
+
+        it("can show file list with globPattern parameter", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            var opts:PackageManagerBackend.ISearchOptions = {
+                repos: [{
+                    url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                }],
+                globPattern: "**/*.d.ts"
+            };
+            return pmb.search(opts)
+                .then(fileList=> {
+                    assert(fileList.length !== 0);
+
+                    var includePatterns = [/\.d\.ts$/, /\.ts$/];
+                    var excludePatterns = [/\.js$/, /\.tscparams$/, /\.md$/];
+                    fileList.forEach(fileInfo => {
+                        assert(includePatterns.some(regexp => regexp.test(fileInfo.path)));
+                        assert(excludePatterns.every(regexp => !regexp.test(fileInfo.path)));
+                    });
+                });
+        });
+
+        it("can show file list with globPattern parameters", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            var opts:PackageManagerBackend.ISearchOptions = {
+                repos: [{
+                    url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                }],
+                globPatterns: [
+                    "**/*.ts",
+                    "!**/*.d.ts"
+                ]
+            };
+            return pmb.search(opts)
+                .then(fileList=> {
+                    assert(fileList.length !== 0);
+
+                    var includePatterns = [/\.ts$/];
+                    var excludePatterns = [/\.js$/, /\.d\.ts$/, /\.tscparams$/, /\.md$/];
+                    fileList.forEach(fileInfo => {
+                        assert(includePatterns.some(regexp => regexp.test(fileInfo.path)));
+                        assert(excludePatterns.every(regexp => !regexp.test(fileInfo.path)));
+                    });
+                });
+        });
+
+        it("can show file list with regexpPattern parameters", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            var opts:PackageManagerBackend.ISearchOptions = {
+                repos: [{
+                    url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                }],
+                regexpPattern: /atom/
+            };
+            return pmb.search(opts)
+                .then(fileList=> {
+                    assert(fileList.length !== 0);
+
+                    assert(fileList.some(fileInfo => fileInfo.path === "atom/atom.d.ts"));
+                });
+        });
+
+        it("can show file list with filter", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            var opts:PackageManagerBackend.ISearchOptions = {
+                repos: [{
+                    url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                }],
+                filter: fileInfo => {
+                    return fileInfo.path === "atom/atom.d.ts";
+                }
+            };
+            return pmb.search(opts)
+                .then(fileList=> {
+                    assert(fileList.length === 1);
+                });
+        });
+    });
+
     describe("#getByRecipe", ()=> {
         it("can get file contents", ()=> {
             var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
