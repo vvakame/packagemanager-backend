@@ -8,6 +8,17 @@ export function debug(...args:any[]) {
     }
 }
 
+export function extend(obj:any, ...args:any[]) {
+    "use strict";
+
+    args.forEach(arg => {
+        for (var key in arg) {
+            obj[key] = arg[key];
+        }
+    });
+    return obj;
+}
+
 export function deepClone(obj:any) {
     "use strict";
 

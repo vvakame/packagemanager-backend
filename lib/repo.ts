@@ -14,6 +14,9 @@ import path = require("path");
 import dns = require("dns");
 import mkdirp = require("mkdirp");
 import child_process = require("child_process");
+import http = require("http");
+import request = require("request");
+// (<any>request).debug = true;
 
 import utils = require("./utils");
 import debug = utils.debug;
@@ -26,6 +29,8 @@ class Repo {
 
     urlInfo:_url.Url;
     sshInfo:ISSHInfo;
+
+    type:Repo.Type;
 
     constructor(public backend:PackageManagerBackend, public url:string) {
         var urlInfo = _url.parse(this.url);
@@ -51,6 +56,70 @@ class Repo {
 
     getHomeDir():string {
         return process.env.HOME || process.env.USERPROFILE;
+    }
+
+    checkUrlInfo():Promise<Repo.Type> {
+        if (!this.urlInfo) {
+            return Promise.reject("urlInfo is not exists");
+        }
+
+        return new Promise((resolve:(value:Repo.Type)=>void, reject:(error?:any)=>void)=> {
+            var contentTypeToType = (response:http.ClientResponse) => {
+                var contentType:string = response.headers["content-type"];
+                switch (contentType) {
+                    case 'application/zip':
+                        return Repo.Type.Zip;
+                    case 'application/x-gzip':
+                        return Repo.Type.GZip;
+                    default:
+                        break;
+                }
+                return void 0;
+            };
+
+            var doRequest = (targetUrl:string) => {
+                var req = request(targetUrl, {
+                    method: "HEAD",
+                    followRedirect: false,
+                    followAllRedirects: false
+                }, (error:any, response:http.ClientResponse, body:any)=> {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    if (response.statusCode === 301) {
+                        // GitHub returns 301 Moved.
+                        this.type = Repo.Type.Git;
+                        resolve(this.type);
+                    } else if (response.statusCode === 302) {
+                        this.type = contentTypeToType(response);
+                        if (this.type != null) {
+                            resolve(this.type);
+                            return;
+                        }
+
+                        var location:string = response.headers.location;
+                        if (!location) {
+                            reject("location header is not exists");
+                            return;
+                        }
+                        doRequest(location);
+                    } else if (response.statusCode === 200) {
+                        this.type = contentTypeToType(response);
+                        if (this.type != null) {
+                            resolve(this.type);
+                            return;
+                        }
+
+                        reject("unsupported Content-Type: " + response.headers["content-type"]);
+                    } else {
+                        reject("unsupported http status code: " + response.statusCode);
+                    }
+                });
+                req.end();
+            };
+            doRequest(this.url);
+        });
     }
 
     resolveTargetDir() {
@@ -143,6 +212,16 @@ class Repo {
                 });
             }
         });
+    }
+}
+
+module Repo {
+    "use strict";
+
+    export enum Type {
+        Git,
+        Zip,
+        GZip
     }
 }
 
