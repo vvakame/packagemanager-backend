@@ -56,21 +56,30 @@ class Repo {
     resolveTargetDir() {
         var homeDir = this.getHomeDir();
         var containsHomeDir = this.backend.opts.rootDir.indexOf("~/") === 0;
+        var endWithDotGit = /\.git$/.test(this.url);
+        var type = "git";
+        var baseDir:string;
+        var targetHost:string;
+        var targetPath:string;
+
+        if (containsHomeDir) {
+            baseDir = path.resolve(homeDir, this.backend.opts.rootDir.substr(2));
+        } else {
+            baseDir = this.backend.opts.rootDir;
+        }
         if (this.urlInfo) {
             // e.g. https://github.com/borisyankov/DefinitelyTyped.git
-            if (containsHomeDir) {
-                this.targetDir = path.resolve(homeDir, this.backend.opts.rootDir.substr(2), this.urlInfo.host, this.urlInfo.path.substr(1));
-            } else {
-                this.targetDir = path.resolve(this.backend.opts.rootDir, this.urlInfo.host, this.urlInfo.path.substr(1));
-            }
+            targetHost = this.urlInfo.host;
+            targetPath = this.urlInfo.path.substr(1);
         } else if (this.sshInfo) {
             // e.g. git@github.com:vvakame/fs-git.git
-            if (containsHomeDir) {
-                this.targetDir = path.resolve(homeDir, this.backend.opts.rootDir.substr(2), this.sshInfo.hostname, this.sshInfo.path);
-            } else {
-                this.targetDir = path.resolve(this.backend.opts.rootDir, this.sshInfo.hostname, this.sshInfo.path);
-            }
+            targetHost = this.sshInfo.hostname;
+            targetPath = this.sshInfo.path;
         }
+        if (endWithDotGit) {
+            targetPath = targetPath.substr(0, targetPath.length - 4);
+        }
+        this.targetDir = path.resolve(baseDir, type, targetHost, targetPath);
     }
 
     resolve():Promise<void> {

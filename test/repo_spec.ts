@@ -34,7 +34,7 @@ describe("Repo", () => {
             repo.getHomeDir = () => "/Users/foobar";
             repo.resolveTargetDir();
 
-            assert(repo.targetDir === "/tmp/foobar/github.com/vvakame/dotfiles.git");
+            assert(repo.targetDir === "/tmp/foobar/git/github.com/vvakame/dotfiles");
         });
 
         it("can solve targetDir (include home dir) by http url", ()=> {
@@ -44,7 +44,7 @@ describe("Repo", () => {
             repo.getHomeDir = () => "/Users/fizzbuzz";
             repo.resolveTargetDir();
 
-            assert(repo.targetDir === "/Users/fizzbuzz/foobar/github.com/vvakame/dotfiles.git");
+            assert(repo.targetDir === "/Users/fizzbuzz/foobar/git/github.com/vvakame/dotfiles");
         });
 
         it("can solve targetDir (exclude home dir) by ssh url", ()=> {
@@ -54,7 +54,7 @@ describe("Repo", () => {
             repo.getHomeDir = () => "/Users/foobar";
             repo.resolveTargetDir();
 
-            assert(repo.targetDir === "/tmp/foobar/github.com/vvakame/fs-git.git");
+            assert(repo.targetDir === "/tmp/foobar/git/github.com/vvakame/fs-git");
         });
 
         it("can solve targetDir (include home dir) by ssh url", ()=> {
@@ -64,7 +64,7 @@ describe("Repo", () => {
             repo.getHomeDir = () => "/Users/fizzbuzz";
             repo.resolveTargetDir();
 
-            assert(repo.targetDir === "/Users/fizzbuzz/foobar/github.com/vvakame/fs-git.git");
+            assert(repo.targetDir === "/Users/fizzbuzz/foobar/git/github.com/vvakame/fs-git");
         });
     });
 
@@ -138,7 +138,7 @@ describe("Repo", () => {
             var repo = new Repo(pmb, "git@github.com:vvakame/fs-git.git");
 
             var command = repo.buildCommand("log");
-            assert(command === "git --git-dir=" + rootDir + "/github.com/vvakame/fs-git.git log");
+            assert(command === "git --git-dir=" + rootDir + "/git/github.com/vvakame/fs-git log");
         });
     });
 
