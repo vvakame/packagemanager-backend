@@ -33,5 +33,13 @@
   },
   "directories": {
     "test": "test"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vvakame/packagemanager-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vvakame/packagemanager-backend/issues"
+  },
+  "homepage": "https://github.com/vvakame/packagemanager-backend"
 }
