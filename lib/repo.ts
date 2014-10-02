@@ -138,6 +138,21 @@ class Repo {
         });
     }
 
+    showRef(ref:string):Promise<string> {
+        var command = this.buildCommand("show-ref", "--hash", ref);
+
+        return new Promise((resolve:(value?:any)=>void, reject:(error:any)=>void)=> {
+            child_process.exec(command, (error, stdout, stderr)=> {
+                if (error) {
+                    reject(error);
+                } else {
+                    var list = stdout.toString("utf8").split("\n").filter(str => str.length !== 0);
+                    resolve(list[0]);
+                }
+            });
+        });
+    }
+
     buildCommand(...args:string[]):string {
         return "git --git-dir=" + this.targetDir + " " + args.join(" ");
     }

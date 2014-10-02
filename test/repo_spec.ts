@@ -132,6 +132,18 @@ describe("Repo", () => {
         });
     });
 
+    describe("#showRef", ()=> {
+        it("can expand branch name to ref", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir});
+            var repo = new Repo(pmb.opts, "git@github.com:vvakame/fs-git.git");
+
+            return repo.showRef("master").then(ref=> {
+                assert(ref);
+                assert(ref !== "master");
+            });
+        });
+    });
+
     describe("#buildCommand", ()=> {
         it("can construct command. it include --git-dir option", ()=> {
             var pmb = new PackageManagerBackend({rootDir: rootDir});
