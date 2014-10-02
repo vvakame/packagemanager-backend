@@ -12,6 +12,7 @@ typings/
 
 # codes
 test/
+test-repository/
 
 # misc
 .gitignore
