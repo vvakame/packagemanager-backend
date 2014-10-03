@@ -1,6 +1,4 @@
-import fs = require("fs");
 import path = require("path");
-import mkdirp = require("mkdirp");
 import fsgit = require("fs-git");
 import minimatch = require("minimatch");
 
@@ -25,12 +23,6 @@ class PackageManagerBackend {
             throw new Error("opts is required");
         } else if (!this.opts.rootDir) {
             throw new Error("rootDir is required");
-        }
-
-        if (!fs.existsSync(this.opts.rootDir)) {
-            mkdirp.sync(this.opts.rootDir);
-        } else if (!fs.statSync(this.opts.rootDir).isDirectory()) {
-            throw new Error(this.opts.rootDir + " is not directory");
         }
     }
 

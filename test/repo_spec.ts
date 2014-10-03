@@ -41,10 +41,10 @@ describe("Repo", () => {
             var pmb = new PackageManagerBackend({rootDir: "~/foobar"});
             var repo = new Repo(pmb.opts, "https://github.com/vvakame/dotfiles.git");
 
-            repo.getHomeDir = () => "/Users/fizzbuzz";
+            repo.getHomeDir = () => process.cwd() + "/test-repository";
             repo.resolveTargetDir();
 
-            assert(repo.targetDir === "/Users/fizzbuzz/foobar/git/github.com/vvakame/dotfiles");
+            assert(repo.targetDir === process.cwd() + "/test-repository/foobar/git/github.com/vvakame/dotfiles");
         });
 
         it("can solve targetDir (exclude home dir) by ssh url", ()=> {
@@ -61,10 +61,10 @@ describe("Repo", () => {
             var pmb = new PackageManagerBackend({rootDir: "~/foobar"});
             var repo = new Repo(pmb.opts, "git@github.com:vvakame/fs-git.git");
 
-            repo.getHomeDir = () => "/Users/fizzbuzz";
+            repo.getHomeDir = () => process.cwd() + "/test-repository";
             repo.resolveTargetDir();
 
-            assert(repo.targetDir === "/Users/fizzbuzz/foobar/git/github.com/vvakame/fs-git");
+            assert(repo.targetDir === process.cwd() + "/test-repository/foobar/git/github.com/vvakame/fs-git");
         });
     });
 
@@ -120,6 +120,7 @@ describe("Repo", () => {
         it("can'n fetch from unresolved host", ()=> {
             var pmb = new PackageManagerBackend({rootDir: rootDir});
             var repo = new Repo(pmb.opts, "git@not-exists.vvakame.net:hostNotExistsForever.git");
+            repo.getHomeDir = () => process.cwd() + "/test-repository";
 
             assert(!repo.alreadyTryFetchAll);
 

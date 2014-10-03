@@ -80,6 +80,9 @@ class Repo {
             targetPath = targetPath.substr(0, targetPath.length - 4);
         }
         this.targetDir = path.resolve(baseDir, type, targetHost, targetPath);
+        if (fs.existsSync(this.targetDir) && !fs.statSync(this.targetDir).isDirectory()) {
+            throw new Error(this.targetDir + " is not directory");
+        }
     }
 
     resolve():Promise<void> {
@@ -94,9 +97,6 @@ class Repo {
     }
 
     gitFetchAll():Promise<void> {
-        if (!this.targetDir) {
-            throw new Error("targetDir is undefined");
-        }
         return new Promise((resolve:(value?:any)=>void, reject:(error:any)=>void)=> {
             this.alreadyTryFetchAll = true;
 
