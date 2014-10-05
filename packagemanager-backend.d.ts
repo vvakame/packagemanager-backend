@@ -23,6 +23,10 @@ declare module "packagemanager-backend" {
         }, result:PackageManagerBackend.IResult):any;
 
         public pushAdditionalDependency(recipe:PackageManagerBackend.IRecipe, baseDep:PackageManagerBackend.IDependency, relativePath:string):void;
+
+        public saveConfig(data: any): void;
+
+        public loadConfig(): any;
     }
 
     export module PackageManagerBackend {

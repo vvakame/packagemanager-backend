@@ -1,4 +1,5 @@
 import path = require("path");
+import fs = require("fs");
 import fsgit = require("fs-git");
 import minimatch = require("minimatch");
 
@@ -163,6 +164,21 @@ class PackageManagerBackend {
             path: path.join(path.dirname(baseDep.path), relativePath),
             name: depName
         };
+    }
+
+    saveConfig(data:any) {
+        data = data || {};
+        var configPath = path.resolve(this.opts.rootDir, "config.json");
+        fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
+    }
+
+    loadConfig():any {
+        var configPath = path.resolve(this.opts.rootDir, "config.json");
+        var dataStr = "{}";
+        if (fs.existsSync(configPath)) {
+            dataStr = fs.readFileSync(configPath, "utf8");
+        }
+        return JSON.parse(dataStr);
     }
 }
 

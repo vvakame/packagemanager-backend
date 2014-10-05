@@ -245,4 +245,38 @@ describe("PackageManagerBackend", () => {
                 });
         });
     });
+
+    describe("#saveConfig", ()=> {
+        var configPath = path.resolve(rootDir, "config.json");
+
+        beforeEach(()=> {
+            if (fs.existsSync(configPath)) {
+                fs.unlinkSync(configPath);
+            }
+        });
+
+        it("can save config data", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            assert(!fs.existsSync(configPath));
+            pmb.saveConfig({hi: "Hello!"});
+            assert(fs.existsSync(configPath));
+        });
+    });
+
+    describe("#loadConfig", ()=> {
+        var configPath = path.resolve(rootDir, "config.json");
+
+        beforeEach(()=> {
+            if (fs.existsSync(configPath)) {
+                fs.unlinkSync(configPath);
+            }
+            fs.writeFileSync(configPath, "{\"boolean\": true}");
+        });
+
+        it("can load config data", ()=> {
+            var pmb = new PackageManagerBackend({rootDir: rootDir, offlineFirst: true});
+            var data = pmb.loadConfig();
+            assert(data.boolean === true);
+        });
+    });
 });
