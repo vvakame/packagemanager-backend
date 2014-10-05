@@ -19,11 +19,21 @@ import IResult = PackageManagerBackend.IResult;
 import IDependency = PackageManagerBackend.IDependency;
 
 class PackageManagerBackend {
+    baseDir:string;
+
     constructor(public opts:IOptions) {
         if (!this.opts) {
             throw new Error("opts is required");
         } else if (!this.opts.rootDir) {
             throw new Error("rootDir is required");
+        }
+
+        var homeDir = utils.homeDir();
+        var containsHomeDir = this.opts.rootDir.indexOf("~/") === 0;
+        if (containsHomeDir) {
+            this.baseDir = path.resolve(homeDir, this.opts.rootDir.substr(2));
+        } else {
+            this.baseDir = this.opts.rootDir;
         }
     }
 

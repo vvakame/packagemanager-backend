@@ -50,7 +50,7 @@ class Repo {
     }
 
     getHomeDir():string {
-        return process.env.HOME || process.env.USERPROFILE;
+        return utils.homeDir();
     }
 
     resolveTargetDir() {

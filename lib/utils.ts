@@ -36,3 +36,9 @@ export function deepClone(obj:any) {
         return obj;
     }
 }
+
+export function homeDir():string {
+    "use strict";
+
+    return process.env.HOME || process.env.USERPROFILE;
+}
