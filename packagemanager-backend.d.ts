@@ -10,6 +10,8 @@ declare module "packagemanager-backend" {
     export class PackageManagerBackend {
         public opts:PackageManagerBackend.IOptions;
 
+        public baseDir: string;
+
         constructor(opts:PackageManagerBackend.IOptions);
 
         public fetch(url:string, opts?:PackageManagerBackend.IOptions):Promise<Repo>;
