@@ -178,12 +178,12 @@ class PackageManagerBackend {
 
     saveConfig(data:any) {
         data = data || {};
-        var configPath = path.resolve(this.opts.rootDir, "config.json");
+        var configPath = path.resolve(this.baseDir, "config.json");
         fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
     }
 
     loadConfig():any {
-        var configPath = path.resolve(this.opts.rootDir, "config.json");
+        var configPath = path.resolve(this.baseDir, "config.json");
         var dataStr = "{}";
         if (fs.existsSync(configPath)) {
             dataStr = fs.readFileSync(configPath, "utf8");
