@@ -27,14 +27,12 @@ module.exports = function (grunt) {
             },
             clientMain: {
                 src: ['<%= opt.client.tsMain %>/index.ts'],
-                out: '<%= opt.client.jsMainOut %>/index.js',
                 options: {
                     declaration: true
                 }
             },
             clientTest: {
-                src: ['<%= opt.client.tsTest %>/index_spec.ts'],
-                out: '<%= opt.client.jsTestOut %>/index_spec.js'
+                src: ['<%= opt.client.tsTest %>/index_spec.ts']
             }
         },
         tslint: {
@@ -100,32 +98,15 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        replace: {
-            definitions: {
-                src: ['<%= opt.client.jsMainOut %>/fs.d.ts'],
-                dest: 'fs-git.d.ts',
-                replacements: [
-                    {
-                        from: /^\/\/\/.*$/gm,
-                        to: ''
-                    },
-                    {
-                        from: /declare /gm,
-                        to: ''
-                    },
-                    {
-                        from: /export /gm,
-                        to: ''
-                    },
-                    {
-                        from: /^/g,
-                        to: '\ndeclare module "fs-git" {\n'
-                    },
-                    {
-                        from: /$/g,
-                        to: '\n}\n'
-                    }
-                ]
+        dts_bundle: {
+            build: {
+                options: {
+                    name: "packagemanager-backend",
+                    main: "lib/index.d.ts",
+                    baseDir: "",
+                    out: "packagemanager-backend.d.ts",
+                    prefix: ''
+                }
             }
         },
         mochaTest: {
@@ -158,7 +139,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask(
         'default',
-        ['ts:clientMain', 'tslint']);
+        ['ts:clientMain', 'tslint', 'dts_bundle']);
 
     grunt.registerTask(
         'test',
