@@ -60,19 +60,10 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        tsd: {
-            client: {
-                options: {
-                    // execute a command
-                    command: 'reinstall',
-
-                    //optional: always get from HEAD
-                    latest: false,
-
-                    // optional: specify config file
-                    config: './tsd.json'
-                }
-            }
+        dtsm: {
+            src: [
+                "typings/"
+            ]
         },
         clean: {
             clientScript: {
@@ -89,12 +80,9 @@ module.exports = function (grunt) {
                     '<%= opt.client.peg %>/grammar.js'
                 ]
             },
-            tsd: {
+            dtsm: {
                 src: [
-                    // tsd installed
-                    "d.ts/",
-                    '<%= opt.client.tsMain %>/libs/DefinitelyTyped',
-                    '<%= opt.client.tsTest %>/libs/DefinitelyTyped'
+                    "typings/"
                 ]
             }
         },
@@ -135,7 +123,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask(
         'setup',
-        ['clean', 'tsd']);
+        ['clean', 'dtsm']);
 
     grunt.registerTask(
         'default',

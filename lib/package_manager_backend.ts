@@ -3,9 +3,7 @@ import fs = require("fs");
 import fsgit = require("fs-git");
 import minimatch = require("minimatch");
 
-/* tslint:disable:variable-name */
-var Promise:typeof Promise = require("ypromise");
-/* tslint:enable:variable-name */
+require("es6-promise").polyfill();
 
 import Repo = require("./repo");
 
@@ -122,7 +120,7 @@ class PackageManagerBackend {
         return this.resolveDependencies(recipe, repos, result);
     }
 
-    resolveDependencies(recipe:IRecipe, repos:{[targetDir: string]: Repo; }, result:IResult) {
+    resolveDependencies(recipe:IRecipe, repos:{[targetDir: string]: Repo; }, result:IResult): Promise<IResult> {
         var resolvePromises:Promise<void>[] = [];
         var needNext = false;
         Object.keys(recipe.dependencies).forEach(depName => {
@@ -144,11 +142,11 @@ class PackageManagerBackend {
             return Promise.resolve(result);
         }
         return Promise.all(resolvePromises).then(()=> {
-            var promises = Object.keys(recipe.dependencies).map(depName => {
+            var promises = Object.keys(recipe.dependencies).map((depName:string):Promise<void> => {
                 var dep = recipe.dependencies[depName];
                 var depResult = result.dependencies[depName];
                 if (depResult.content) {
-                    return Promise.resolve(null);
+                    return Promise.resolve(<void>null);
                 }
                 return depResult.repo.open(dep.ref).then(fs=> {
                     return fs.readFile(dep.path).then(content=> {

@@ -3,9 +3,7 @@ import _url = require("url");
 import fs = require("fs");
 import fsgit = require("fs-git");
 
-/* tslint:disable:variable-name */
-var Promise:typeof Promise = require("ypromise");
-/* tslint:enable:variable-name */
+require("es6-promise").polyfill();
 
 import PackageManagerBackend = require("./package_manager_backend");
 import ISSHInfo = PackageManagerBackend.ISSHInfo;
@@ -90,7 +88,7 @@ class Repo {
             return Promise.reject(new Error());
         }
         if (this.opts.offlineFirst && fs.existsSync(this.targetDir)) {
-            return Promise.resolve(null);
+            return Promise.resolve(<void>null);
         } else {
             return this.gitFetchAll();
         }

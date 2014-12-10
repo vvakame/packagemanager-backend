@@ -26,7 +26,7 @@ declare module 'packagemanager-backend/lib/package_manager_backend' {
         getByRecipe(recipe: IRecipe): Promise<IResult>;
         resolveDependencies(recipe: IRecipe, repos: {
             [x: string]: Repo;
-        }, result: IResult): any;
+        }, result: IResult): Promise<IResult>;
         pushAdditionalDependency(recipe: IRecipe, baseDep: IDependency, relativePath: string): void;
         saveConfig(data: any): void;
         loadConfig(): any;
