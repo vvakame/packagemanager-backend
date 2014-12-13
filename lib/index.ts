@@ -6,11 +6,24 @@
 /// <reference path="../typings/minimatch/minimatch.d.ts" />
 
 try {
-    // optional
-    require("source-map-support").install();
+	// optional
+	require("source-map-support").install();
 } catch (e) {
 }
+require("es6-promise").polyfill();
 
-export import PackageManagerBackend = require("./package_manager_backend");
+export import Manager = require("./manager");
 export import Repo = require("./repo");
-export import utils = require("./utils");
+
+/* tslint:disable:no-unused-variable */
+import model = require("./model");
+export import ManagerOptions = model.ManagerOptions;
+export import RepositorySpec = model.RepositorySpec;
+export import SSHInfo = model.SSHInfo;
+export import SearchOptions = model.SearchOptions;
+export import SearchResult = model.SearchResult;
+export import Recipe = model.Recipe;
+export import Result = model.Result;
+export import DepResult = model.DepResult;
+export import Dependency = model.Dependency;
+/* tslint:enable:no-unused-variable */

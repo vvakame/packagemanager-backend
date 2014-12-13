@@ -1,156 +1,154 @@
-import _url = require("url");
-
+import url = require("url");
 import fs = require("fs");
-import fsgit = require("fs-git");
-
-require("es6-promise").polyfill();
-
-import PackageManagerBackend = require("./package_manager_backend");
-import ISSHInfo = PackageManagerBackend.ISSHInfo;
-
 import path = require("path");
 import dns = require("dns");
 import mkdirp = require("mkdirp");
 import child_process = require("child_process");
 
+import fsgit = require("fs-git");
+
+import m = require("./model");
 import utils = require("./utils");
-import debug = utils.debug;
+
+var debug:any = () => {
+};
 
 class Repo {
-    targetDir:string;
-    networkConnectivity:boolean;
-    fetchError:string;
-    alreadyTryFetchAll:boolean;
+	static createRepo(baseDir:string, spec:m.RepositorySpec):Repo {
+		var _repo = new Repo(spec);
+		_repo._resolveTargetDir(baseDir);
+		return _repo;
+	}
 
-    urlInfo:_url.Url;
-    sshInfo:ISSHInfo;
+	urlInfo:url.Url;
+	sshInfo:m.SSHInfo;
 
-    constructor(public opts:PackageManagerBackend.IOptions, public url:string) {
-        var urlInfo = _url.parse(this.url);
-        if (urlInfo.protocol) {
-            this.urlInfo = urlInfo;
-            this.resolveTargetDir();
-            return;
-        }
+	targetDir:string;
+	networkConnectivity:boolean;
+	fetchError:string;
+	alreadyTryFetchAll:boolean;
 
-        var matches = this.url.match(/^([^@]+)@([^:]+):(.*)$/);
-        if (matches) {
-            this.sshInfo = {
-                user: matches[1],
-                hostname: matches[2],
-                path: matches[3]
-            };
-            this.resolveTargetDir();
-            return;
-        }
+	constructor(public spec:m.RepositorySpec) {
+		this.spec = utils.deepClone(this.spec);
+		this.spec.ref = this.spec.ref || "master";
 
-        // TODO files (zip etc...), url
-    }
+		var urlInfo = url.parse(spec.url);
+		if (urlInfo.protocol) {
+			this.urlInfo = urlInfo;
+			return;
+		}
 
-    getHomeDir():string {
-        return utils.homeDir();
-    }
+		var matches = spec.url.match(/^([^@]+)@([^:]+):(.*)$/);
+		if (matches) {
+			this.sshInfo = {
+				user: matches[1],
+				hostname: matches[2],
+				path: matches[3]
+			};
+			return;
+		}
 
-    resolveTargetDir() {
-        var homeDir = this.getHomeDir();
-        var containsHomeDir = this.opts.rootDir.indexOf("~/") === 0;
-        var endWithDotGit = /\.git$/.test(this.url);
-        var type = "git";
-        var baseDir:string;
-        var targetHost:string;
-        var targetPath:string;
+		// TODO files (zip etc...), url
+	}
 
-        if (containsHomeDir) {
-            baseDir = path.resolve(homeDir, this.opts.rootDir.substr(2));
-        } else {
-            baseDir = this.opts.rootDir;
-        }
-        if (this.urlInfo) {
-            // e.g. https://github.com/borisyankov/DefinitelyTyped.git
-            targetHost = this.urlInfo.host;
-            targetPath = this.urlInfo.path.substr(1);
-        } else if (this.sshInfo) {
-            // e.g. git@github.com:vvakame/fs-git.git
-            targetHost = this.sshInfo.hostname;
-            targetPath = this.sshInfo.path;
-        }
-        if (endWithDotGit) {
-            targetPath = targetPath.substr(0, targetPath.length - 4);
-        }
-        this.targetDir = path.resolve(baseDir, type, targetHost, targetPath);
-        if (fs.existsSync(this.targetDir) && !fs.statSync(this.targetDir).isDirectory()) {
-            throw new Error(this.targetDir + " is not directory");
-        }
-    }
+	_resolveTargetDir(baseDir:string) {
+		if (baseDir.indexOf("~/") === 0) {
+			var homeDir = utils.homeDir();
+			baseDir = path.resolve(homeDir, baseDir.substr(2));
+		}
 
-    resolve():Promise<void> {
-        if (!this.targetDir) {
-            return Promise.reject(new Error());
-        }
-        if (this.opts.offlineFirst && fs.existsSync(this.targetDir)) {
-            return Promise.resolve(<void>null);
-        } else {
-            return this.gitFetchAll();
-        }
-    }
+		var endWithDotGit = /\.git$/.test(this.spec.url);
+		var type = "git";
+		var targetHost:string;
+		var targetPath:string;
 
-    gitFetchAll():Promise<void> {
-        return new Promise((resolve:(value?:any)=>void, reject:(error:any)=>void)=> {
-            this.alreadyTryFetchAll = true;
+		if (this.urlInfo) {
+			// e.g. https://github.com/borisyankov/DefinitelyTyped.git
+			targetHost = this.urlInfo.host;
+			targetPath = this.urlInfo.path.substr(1);
+		} else if (this.sshInfo) {
+			// e.g. git@github.com:vvakame/fs-git.git
+			targetHost = this.sshInfo.hostname;
+			targetPath = this.sshInfo.path;
+		}
+		if (endWithDotGit) {
+			targetPath = targetPath.substr(0, targetPath.length - 4);
+		}
+		this.targetDir = path.resolve(baseDir, type, targetHost, targetPath);
+		if (fs.existsSync(this.targetDir) && !fs.statSync(this.targetDir).isDirectory()) {
+			throw new Error(this.targetDir + " is not directory");
+		}
+	}
 
-            // check network connectivity
-            var hostname:string;
-            if (this.urlInfo) {
-                hostname = this.urlInfo.hostname;
-            } else if (this.sshInfo) {
-                hostname = this.sshInfo.hostname;
-            } else {
-                throw new Error("unsupported url: " + this.url);
-            }
-            dns.resolve(hostname, err => {
-                this.networkConnectivity = !err;
-                if (this.networkConnectivity) {
-                    var command:string;
-                    if (fs.existsSync(this.targetDir)) {
-                        command = this.buildCommand("fetch", "--all");
-                    } else {
-                        debug("make dir", path.resolve(this.targetDir, "../"));
-                        mkdirp.sync(path.resolve(this.targetDir, "../"));
-                        command = this.buildCommand("clone", "--mirror", this.url, this.targetDir);
-                    }
-                    debug("exec command", command);
-                    child_process.exec(command, (error, stdout, stderr)=> {
-                        this.fetchError = error ? stderr.toString("utf8") : null;
-                        resolve();
-                    });
-                } else {
-                    if (!fs.existsSync(this.targetDir)) {
-                        reject("no network connectivity");
-                        return;
-                    } else {
-                        resolve();
-                        return;
-                    }
-                }
-            });
-        });
-    }
+	fetchIfNotInitialized():Promise<Repo> {
+		if (!this.targetDir) {
+			return Promise.reject(new Error());
+		}
+		if (fs.existsSync(this.targetDir)) {
+			return Promise.resolve(this);
+		} else {
+			return this.fetchAll();
+		}
+	}
 
-    buildCommand(...args:string[]):string {
-        return "git --git-dir=" + this.targetDir + " " + args.join(" ");
-    }
+	fetchAll():Promise<Repo> {
+		return new Promise((resolve:(value:Repo)=>void, reject:(error:any)=>void)=> {
+			this.alreadyTryFetchAll = true;
 
-    open(ref:string):Promise<fsgit.FSGit> {
-        return fsgit.open(this.targetDir, ref).catch(error=> {
-            if (this.alreadyTryFetchAll) {
-                return Promise.reject(error);
-            } else {
-                return this.gitFetchAll().then(()=> {
-                    return this.open(ref);
-                });
-            }
-        });
-    }
+			// check network connectivity
+			var hostname:string;
+			if (this.urlInfo) {
+				hostname = this.urlInfo.hostname;
+			} else if (this.sshInfo) {
+				hostname = this.sshInfo.hostname;
+			} else {
+				throw new Error("unsupported url: " + this.spec.url);
+			}
+			dns.resolve(hostname, err => {
+				this.networkConnectivity = !err;
+				if (this.networkConnectivity) {
+					var command:string;
+					if (fs.existsSync(this.targetDir)) {
+						command = this._buildCommand("fetch", "--all");
+					} else {
+						debug("make dir", path.resolve(this.targetDir, "../"));
+						mkdirp.sync(path.resolve(this.targetDir, "../"));
+						command = this._buildCommand("clone", "--mirror", this.spec.url, this.targetDir);
+					}
+					debug("exec command", command);
+					child_process.exec(command, (error, stdout, stderr)=> {
+						this.fetchError = error ? stderr.toString("utf8") : null;
+						resolve(this);
+					});
+				} else {
+					if (!fs.existsSync(this.targetDir)) {
+						reject("no network connectivity");
+						return;
+					} else {
+						resolve(this);
+						return;
+					}
+				}
+			});
+		});
+	}
+
+	_buildCommand(...args:string[]):string {
+		return "git --git-dir=" + this.targetDir + " " + args.join(" ");
+	}
+
+	open(ref:string = this.spec.ref):Promise<fsgit.FSGit> {
+		ref = ref || "master";
+		return fsgit.open(this.targetDir, ref).catch(error=> {
+			if (this.alreadyTryFetchAll) {
+				return Promise.reject(error);
+			} else {
+				return this.fetchAll().then(()=> {
+					return this.open(ref);
+				});
+			}
+		});
+	}
 }
 
 export = Repo;

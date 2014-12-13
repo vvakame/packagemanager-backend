@@ -10,5 +10,5 @@ index;
 import repoSpec = require("./repo_spec");
 repoSpec;
 
-import packageManagerBackendSpec = require("./package_manager_backend_spec");
-packageManagerBackendSpec;
+import managerSpec = require("./manager_spec");
+managerSpec;

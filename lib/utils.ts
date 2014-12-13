@@ -1,44 +1,23 @@
-var debugFlag = false;
+export function homeDir():string {
+	"use strict";
 
-export function debug(...args:any[]) {
-    "use strict";
-
-    if (debugFlag) {
-        console.log.apply(console, args);
-    }
-}
-
-export function extend(dest:any, ...sources:any[]) {
-    "use strict";
-
-    sources.forEach(source => {
-        for (var key in source) {
-            dest[key] = source[key];
-        }
-    });
-    return dest;
+	return process.env.HOME || process.env.USERPROFILE;
 }
 
 export function deepClone(obj:any) {
-    "use strict";
+	"use strict";
 
-    if (obj == null) {
-        return obj;
-    } else if (Array.isArray(obj)) {
-        return obj.map((obj:any)=> deepClone(obj));
-    } else if (obj instanceof RegExp) {
-        return obj;
-    } else if (typeof obj === "object") {
-        var cloned:any = {};
-        Object.keys(obj).forEach(key=> cloned[key] = deepClone(obj[key]));
-        return cloned;
-    } else {
-        return obj;
-    }
-}
-
-export function homeDir():string {
-    "use strict";
-
-    return process.env.HOME || process.env.USERPROFILE;
+	if (obj == null) {
+		return obj;
+	} else if (Array.isArray(obj)) {
+		return obj.map((obj:any)=> deepClone(obj));
+	} else if (obj instanceof RegExp) {
+		return obj;
+	} else if (typeof obj === "object") {
+		var cloned:any = {};
+		Object.keys(obj).forEach(key=> cloned[key] = deepClone(obj[key]));
+		return cloned;
+	} else {
+		return obj;
+	}
 }
