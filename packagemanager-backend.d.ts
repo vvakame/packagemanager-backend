@@ -88,7 +88,7 @@ declare module 'packagemanager-backend/lib/model' {
     }
     export interface SearchResult {
         repo: Repo;
-        fileInfo: fsgit.IFileInfo;
+        fileInfo: fsgit.FileInfo;
     }
     export interface Recipe {
         baseRepo?: string;

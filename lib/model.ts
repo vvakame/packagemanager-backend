@@ -26,7 +26,7 @@ export interface SearchOptions {
 
 export interface SearchResult {
 	repo: Repo;
-	fileInfo: fsgit.IFileInfo;
+	fileInfo: fsgit.FileInfo;
 }
 
 export interface Recipe {
