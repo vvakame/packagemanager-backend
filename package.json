@@ -5,13 +5,27 @@
   "private": false,
   "description": "package manager backend",
   "main": "./index",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vvakame/packagemanager-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vvakame/packagemanager-backend/issues"
+  },
+  "homepage": "https://github.com/vvakame/packagemanager-backend",
+  "license": {
+    "type": "MIT",
+    "url": "http://vvakame.mit-license.org/"
+  },
   "typescript": {
     "definition": "packagemanager-backend.d.ts"
   },
   "scripts": {
     "test": "grunt test"
   },
-  "license": "MIT",
   "dependencies": {
     "fs-git": "0.2.0",
     "minimatch": "2.0.1",
@@ -34,16 +48,5 @@
     "source-map-support": "0.2.8",
     "time-grunt": "1.0.0",
     "typescript": "1.3.0"
-  },
-  "directories": {
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vvakame/packagemanager-backend.git"
-  },
-  "bugs": {
-    "url": "https://github.com/vvakame/packagemanager-backend/issues"
-  },
-  "homepage": "https://github.com/vvakame/packagemanager-backend"
+  }
 }
