@@ -95,14 +95,14 @@ declare module 'packagemanager-backend/lib/model' {
         baseRef?: string;
         path: string;
         dependencies: {
-            [x: string]: Dependency;
+            [name: string]: Dependency;
         };
         postProcessForDependency?(recipe: Recipe, dep: Dependency, content: any): void;
     }
     export interface Result {
         recipe: Recipe;
         dependencies: {
-            [x: string]: DepResult;
+            [depName: string]: DepResult;
         };
     }
     export interface DepResult {
