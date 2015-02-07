@@ -171,10 +171,14 @@ class Manager<T> {
 						return Promise.resolve(<void>null);
 					}
 					return depResult.repo.open(dep.ref).then(fs=> {
-						return fs.readFile(dep.path).then(content=> {
+						var info = fs.file(dep.path).then(fileInfo => {
+							depResult.fileInfo = fileInfo;
+						});
+						var content = fs.readFile(dep.path).then(content=> {
 							depResult.content = content;
 							recipe.postProcessForDependency(recipe, dep, content);
 						});
+						return Promise.all([info, content]);
 					}).catch((error:any)=> {
 						depResult.error = error;
 					});

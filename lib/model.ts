@@ -47,6 +47,7 @@ export interface Result {
 export interface DepResult {
 	repo: Repo;
 	error?: any;
+	fileInfo?: fsgit.FileInfo;
 	content?: Buffer;
 }
 

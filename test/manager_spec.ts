@@ -211,6 +211,8 @@ describe("Manager", () => {
 						assert(dep.repo);
 						// assert(dep.repo.networkConnectivity); // offlineFirst
 						assert(dep.repo.fetchError == null);
+						assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
+						assert(dep.fileInfo.type === "blob");
 						assert(typeof dep.content === "string");
 					});
 				});
@@ -278,6 +280,8 @@ describe("Manager", () => {
 						assert(dep.repo);
 						// assert(dep.repo.networkConnectivity); // offlineFirst
 						assert(dep.repo.fetchError == null);
+						assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
+						assert(dep.fileInfo.type === "blob");
 						assert(typeof dep.content === "string");
 					});
 				});

@@ -108,6 +108,7 @@ declare module 'packagemanager-backend/lib/model' {
     export interface DepResult {
         repo: Repo;
         error?: any;
+        fileInfo?: fsgit.FileInfo;
         content?: Buffer;
     }
     export interface Dependency {
