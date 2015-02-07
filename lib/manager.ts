@@ -71,7 +71,7 @@ class Manager<T> {
 			var resultList:m.SearchResult[] = [];
 			var promises = repos.map(repo=> {
 				return repo.open()
-					.then(fs=> fs.filelist())
+					.then(fs=> fs.fileList())
 					.then(fileList => {
 						fileList.forEach(fileInfo => {
 							resultList.push({
