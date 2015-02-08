@@ -334,7 +334,7 @@
         },
         "rimraf": {
           "version": "2.2.8",
-          "from": "rimraf@>=2.2.8 <2.3.0",
+          "from": "rimraf@2.2.8",
           "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.2.8.tgz"
         },
         "lodash": {
@@ -349,7 +349,7 @@
         },
         "which": {
           "version": "1.0.8",
-          "from": "which@>=1.0.5 <1.1.0",
+          "from": "which@1.0.8",
           "resolved": "https://registry.npmjs.org/which/-/which-1.0.8.tgz"
         },
         "js-yaml": {
@@ -757,7 +757,7 @@
                       "dependencies": {
                         "ansi-regex": {
                           "version": "0.2.1",
-                          "from": "ansi-regex@>=0.2.1 <0.3.0",
+                          "from": "ansi-regex@>=0.2.0 <0.3.0",
                           "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-0.2.1.tgz"
                         }
                       }
@@ -769,7 +769,7 @@
                       "dependencies": {
                         "ansi-regex": {
                           "version": "0.2.1",
-                          "from": "ansi-regex@>=0.2.1 <0.3.0",
+                          "from": "ansi-regex@>=0.2.0 <0.3.0",
                           "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-0.2.1.tgz"
                         }
                       }
@@ -2058,7 +2058,7 @@
               "dependencies": {
                 "ansi-regex": {
                   "version": "0.2.1",
-                  "from": "ansi-regex@>=0.2.0 <0.3.0",
+                  "from": "ansi-regex@>=0.2.1 <0.3.0",
                   "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-0.2.1.tgz"
                 }
               }
@@ -2070,7 +2070,7 @@
               "dependencies": {
                 "ansi-regex": {
                   "version": "0.2.1",
-                  "from": "ansi-regex@>=0.2.0 <0.3.0",
+                  "from": "ansi-regex@>=0.2.1 <0.3.0",
                   "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-0.2.1.tgz"
                 }
               }

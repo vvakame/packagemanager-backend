@@ -5,12 +5,7 @@
 /// <reference path="../typings/mkdirp/mkdirp.d.ts" />
 /// <reference path="../typings/minimatch/minimatch.d.ts" />
 
-try {
-	// optional
-	require("source-map-support").install();
-} catch (e) {
-}
-require("es6-promise").polyfill();
+// if you use Node.js 0.10, you need exec `require("es6-promise").polyfill();`
 
 export import Manager = require("./manager");
 export import Repo = require("./repo");

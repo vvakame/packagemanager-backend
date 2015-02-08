@@ -4,6 +4,14 @@
 /// <reference path="../typings/mocha/mocha.d.ts" />
 /// <reference path="../typings/power-assert/power-assert.d.ts" />
 
+require("es6-promise").polyfill();
+
+try {
+	// optional
+	require("source-map-support").install();
+} catch (e) {
+}
+
 import index = require("../lib/index");
 index;
 
