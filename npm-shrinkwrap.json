@@ -1,6 +1,6 @@
 {
   "name": "packagemanager-backend",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "dependencies": {
     "es6-promise": {
       "version": "2.0.1",
@@ -202,8 +202,8 @@
       }
     },
     "fs-git": {
-      "version": "0.4.0",
-      "from": "fs-git@0.4.0"
+      "version": "0.4.1",
+      "from": "fs-git@0.4.1"
     },
     "grunt": {
       "version": "0.4.5",
@@ -757,7 +757,7 @@
                       "dependencies": {
                         "ansi-regex": {
                           "version": "0.2.1",
-                          "from": "ansi-regex@>=0.2.0 <0.3.0",
+                          "from": "ansi-regex@>=0.2.1 <0.3.0",
                           "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-0.2.1.tgz"
                         }
                       }
@@ -769,7 +769,7 @@
                       "dependencies": {
                         "ansi-regex": {
                           "version": "0.2.1",
-                          "from": "ansi-regex@>=0.2.0 <0.3.0",
+                          "from": "ansi-regex@>=0.2.1 <0.3.0",
                           "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-0.2.1.tgz"
                         }
                       }
