@@ -38,7 +38,7 @@
     "grunt-contrib-clean": "0.6.0",
     "grunt-conventional-changelog": "1.1.0",
     "grunt-dts-bundle": "0.2.0",
-    "grunt-dtsm": "0.2.2",
+    "grunt-dtsm": "0.2.3",
     "grunt-mocha-test": "0.12.7",
     "grunt-ts": "3.0.0",
     "grunt-tslint": "2.0.0",
