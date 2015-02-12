@@ -124,6 +124,7 @@ class Manager<T> {
 			dep.ref = dep.ref || recipe.baseRef;
 			dep.path = dep.path || depName;
 			dep.name = dep.name || depName;
+			dep.depth = 1;
 		});
 		recipe.postProcessForDependency = recipe.postProcessForDependency || (() => {
 			false;
@@ -170,6 +171,7 @@ class Manager<T> {
 					if (depResult.content) {
 						return Promise.resolve(<void>null);
 					}
+					depResult.depth = dep.depth;
 					return depResult.repo.open(dep.ref).then(fs=> {
 						var info = fs.file(dep.path).then(fileInfo => {
 							depResult.fileInfo = fileInfo;
@@ -196,7 +198,8 @@ class Manager<T> {
 			repo: baseDep.repo,
 			ref: baseDep.ref,
 			path: path.join(path.dirname(baseDep.path), relativePath),
-			name: depName
+			name: depName,
+			depth: baseDep.depth + 1
 		};
 	}
 

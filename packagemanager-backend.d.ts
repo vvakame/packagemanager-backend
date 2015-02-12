@@ -110,12 +110,14 @@ declare module 'packagemanager-backend/lib/model' {
         error?: any;
         fileInfo?: fsgit.FileInfo;
         content?: Buffer;
+        depth?: number;
     }
     export interface Dependency {
         repo?: string;
         ref?: string;
         name?: string;
         path?: string;
+        depth?: number;
     }
 }
 
