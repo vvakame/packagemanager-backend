@@ -265,14 +265,12 @@ describe("Manager", () => {
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].repo === "https://github.com/vvakame/gapidts.git");
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].path === "test/valid/discovery-v1-nodejs.d.ts");
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].name === "gapi/discovery-v1-nodejs.d.ts");
-					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].depth === 1);
 
 					// copy from gapi/discovery-v1-nodejs.d.ts
 					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
 					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].repo === "https://github.com/vvakame/gapidts.git");
 					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].path === "test/valid/googleapis-nodejs-common.d.ts");
 					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].name === "gapi/googleapis-nodejs-common.d.ts");
-					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].depth === 2);
 
 					assert(result.dependencies);
 					assert(Object.keys(result.dependencies).length === 3);
@@ -285,7 +283,6 @@ describe("Manager", () => {
 						assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
 						assert(dep.fileInfo.type === "blob");
 						assert(typeof dep.content === "string");
-						assert(dep.depth === 1 || dep.depth === 2);
 					});
 				});
 		});

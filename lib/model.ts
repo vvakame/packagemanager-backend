@@ -49,7 +49,6 @@ export interface DepResult {
 	error?: any;
 	fileInfo?: fsgit.FileInfo;
 	content?: Buffer;
-	depth?: number; // 1 origin
 }
 
 export interface Dependency {
@@ -57,5 +56,4 @@ export interface Dependency {
 	ref?: string;
 	name?: string;
 	path?: string;
-	depth?: number; // 1 origin
 }
