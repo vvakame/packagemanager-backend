@@ -196,12 +196,10 @@ describe("Manager", () => {
 					assert(result.recipe.dependencies["node/node.d.ts"].ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd");
 					assert(result.recipe.dependencies["node/node.d.ts"].repo === "https://github.com/borisyankov/DefinitelyTyped.git");
 					assert(result.recipe.dependencies["node/node.d.ts"].path === "node/node.d.ts");
-					assert(result.recipe.dependencies["node/node.d.ts"].name === "node/node.d.ts");
 
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].repo === "https://github.com/vvakame/gapidts.git");
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].path === "test/valid/discovery-v1-nodejs.d.ts");
-					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].name === "gapi/discovery-v1-nodejs.d.ts");
 
 					assert(result.dependencies);
 					assert(Object.keys(result.dependencies).length === 2);
@@ -210,7 +208,7 @@ describe("Manager", () => {
 						var dep = result.dependencies[depName];
 						assert(dep.repo);
 						// assert(dep.repo.networkConnectivity); // offlineFirst
-						assert(dep.repo.fetchError == null);
+						assert(dep.repoInstance.fetchError == null);
 						assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
 						assert(dep.fileInfo.type === "blob");
 						assert(typeof dep.content === "string");
@@ -239,7 +237,7 @@ describe("Manager", () => {
 								path: "test/valid/discovery-v1-nodejs.d.ts"
 							}
 						},
-						postProcessForDependency: (recipe, dep, content) => {
+						postProcessForDependency: (result, depResult, content) => {
 							var reference = /\/\/\/\s+<reference\s+path=["']([^"']*)["']\s*\/>/;
 							var body:string = content.toString("utf8");
 							body
@@ -247,7 +245,13 @@ describe("Manager", () => {
 								.map(line => line.match(reference))
 								.filter(matches => !!matches)
 								.forEach(matches => {
-									manager.pushAdditionalDependency(recipe, dep, matches[1]);
+									var relativePath = matches[1];
+									var obj = result.toDepNameAndPath(relativePath);
+									result.pushAdditionalDependency(obj.depName, {
+										repo: depResult.repo,
+										ref: depResult.ref,
+										path: obj.path
+									});
 								});
 						}
 					});
@@ -255,31 +259,29 @@ describe("Manager", () => {
 				.then(result => {
 					// gapi/discovery-v1-nodejs.d.ts has 1 reference
 					assert(result.recipe);
-					assert(Object.keys(result.recipe.dependencies).length === 3);
-
+					assert(Object.keys(result.recipe.dependencies).length === 2);
 					assert(result.recipe.dependencies["node/node.d.ts"]);
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"]);
-					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"]);
 
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].repo === "https://github.com/vvakame/gapidts.git");
 					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].path === "test/valid/discovery-v1-nodejs.d.ts");
-					assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].name === "gapi/discovery-v1-nodejs.d.ts");
 
-					// copy from gapi/discovery-v1-nodejs.d.ts
-					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
-					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].repo === "https://github.com/vvakame/gapidts.git");
-					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].path === "test/valid/googleapis-nodejs-common.d.ts");
-					assert(result.recipe.dependencies["gapi/googleapis-nodejs-common.d.ts"].name === "gapi/googleapis-nodejs-common.d.ts");
+					assert(result.dependencies["node/node.d.ts"]);
+					assert(result.dependencies["gapi/discovery-v1-nodejs.d.ts"]);
+					assert(Object.keys(result.dependencies["gapi/discovery-v1-nodejs.d.ts"].dependencies).length === 1);
+					assert(result.dependencies["gapi/discovery-v1-nodejs.d.ts"].dependencies["gapi/googleapis-nodejs-common.d.ts"]);
 
 					assert(result.dependencies);
-					assert(Object.keys(result.dependencies).length === 3);
+					assert(Object.keys(result.dependencies).length === 2);
 					assert(Object.keys(result.dependencies).every(depName => !result.dependencies[depName].error));
-					Object.keys(result.dependencies).forEach(depName=> {
-						var dep = result.dependencies[depName];
+					assert(result.dependenciesList.length === 3);
+					result.dependenciesList.forEach(dep => {
 						assert(dep.repo);
+						assert(dep.repoInstance);
 						// assert(dep.repo.networkConnectivity); // offlineFirst
-						assert(dep.repo.fetchError == null);
+						assert(dep.repoInstance.fetchError == null);
+						assert(!dep.error);
 						assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
 						assert(dep.fileInfo.type === "blob");
 						assert(typeof dep.content === "string");

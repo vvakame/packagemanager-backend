@@ -6,6 +6,7 @@
 declare module 'packagemanager-backend' {
     export import Manager = require("packagemanager-backend/lib/manager");
     export import Repo = require("packagemanager-backend/lib/repo");
+    export import Result = require("packagemanager-backend/lib/result");
     import model = require("packagemanager-backend/lib/model");
     export import ManagerOptions = model.ManagerOptions;
     export import RepositorySpec = model.RepositorySpec;
@@ -13,13 +14,13 @@ declare module 'packagemanager-backend' {
     export import SearchOptions = model.SearchOptions;
     export import SearchResult = model.SearchResult;
     export import Recipe = model.Recipe;
-    export import Result = model.Result;
     export import DepResult = model.DepResult;
     export import Dependency = model.Dependency;
 }
 
 declare module 'packagemanager-backend/lib/manager' {
     import Repo = require("packagemanager-backend/lib/repo");
+    import Result = require("packagemanager-backend/lib/result");
     import m = require("packagemanager-backend/lib/model");
     class Manager<T> {
         static createManager<T>(options: m.ManagerOptions): Promise<Manager<T>>;
@@ -30,9 +31,7 @@ declare module 'packagemanager-backend/lib/manager' {
         _resolveRepos(options: m.ManagerOptions): Promise<Repo[]>;
         fetchAllRepos(): Promise<Manager<T>>;
         search(opts?: m.SearchOptions): Promise<m.SearchResult[]>;
-        getByRecipe(recipe: m.Recipe): Promise<m.Result>;
-        resolveDependencies(recipe: m.Recipe, result: m.Result): Promise<m.Result>;
-        pushAdditionalDependency(recipe: m.Recipe, baseDep: m.Dependency, relativePath: string): void;
+        getByRecipe(recipe: m.Recipe): Promise<Result>;
         pickRepo(repo: Repo): Repo;
         pickRepo(dep: m.Dependency): Repo;
         saveConfig(data: T): void;
@@ -64,9 +63,34 @@ declare module 'packagemanager-backend/lib/repo' {
     export = Repo;
 }
 
+declare module 'packagemanager-backend/lib/result' {
+    import Manager = require("packagemanager-backend/lib/manager");
+    import m = require("packagemanager-backend/lib/model");
+    class Result {
+        manager: Manager<{}>;
+        recipe: m.Recipe;
+        dependencies: {
+            [depName: string]: m.DepResult;
+        };
+        _current: m.DepResult;
+        constructor(manager: Manager<{}>, recipe: m.Recipe);
+        pushAdditionalDependency(depName: string, dep: m.Dependency): void;
+        toDepNameAndPath(relativePath: string): {
+            depName: string;
+            path: string;
+        };
+        resolveDependencies(): Promise<Result>;
+        pickDependency(depName: string): m.DepResult;
+        unresolvedDependencies: m.DepResult[];
+        dependenciesList: m.DepResult[];
+    }
+    export = Result;
+}
+
 declare module 'packagemanager-backend/lib/model' {
     import fsgit = require("fs-git");
     import Repo = require("packagemanager-backend/lib/repo");
+    import Result = require("packagemanager-backend/lib/result");
     export interface ManagerOptions {
         rootDir: string;
         repos: RepositorySpec[];
@@ -97,24 +121,22 @@ declare module 'packagemanager-backend/lib/model' {
         dependencies: {
             [name: string]: Dependency;
         };
-        postProcessForDependency?(recipe: Recipe, dep: Dependency, content: any): void;
+        postProcessForDependency?(result: Result, depResult: DepResult, content: any): void;
     }
-    export interface Result {
-        recipe: Recipe;
-        dependencies: {
-            [depName: string]: DepResult;
-        };
-    }
-    export interface DepResult {
-        repo: Repo;
+    export interface DepResult extends Dependency {
+        depName?: string;
+        repoInstance?: Repo;
         error?: any;
         fileInfo?: fsgit.FileInfo;
         content?: Buffer;
+        depth?: number;
+        dependencies?: {
+            [name: string]: DepResult;
+        };
     }
     export interface Dependency {
         repo?: string;
         ref?: string;
-        name?: string;
         path?: string;
     }
 }

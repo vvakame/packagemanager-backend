@@ -6,6 +6,7 @@ import mkdirp = require("mkdirp");
 import utils = require("./utils");
 
 import Repo = require("./repo");
+import Result = require("./result");
 import m = require("./model");
 
 class Manager<T> {
@@ -115,7 +116,7 @@ class Manager<T> {
 		});
 	}
 
-	getByRecipe(recipe:m.Recipe):Promise<m.Result> {
+	getByRecipe(recipe:m.Recipe):Promise<Result> {
 		recipe = utils.deepClone(recipe);
 		recipe.dependencies = recipe.dependencies || {};
 		Object.keys(recipe.dependencies).forEach(depName => {
@@ -123,81 +124,12 @@ class Manager<T> {
 			dep.repo = dep.repo || recipe.baseRepo;
 			dep.ref = dep.ref || recipe.baseRef;
 			dep.path = dep.path || depName;
-			dep.name = dep.name || depName;
 		});
 		recipe.postProcessForDependency = recipe.postProcessForDependency || (() => {
 			false;
 		});
 
-		var result:m.Result = {
-			recipe: recipe,
-			dependencies: {}
-		};
-
-		return this.resolveDependencies(recipe, result);
-	}
-
-	resolveDependencies(recipe:m.Recipe, result:m.Result):Promise<m.Result> {
-		var repoPromises:Promise<Repo>[] = [];
-		var needNext = false;
-		Object.keys(recipe.dependencies).forEach(depName => {
-			if (result.dependencies[depName]) {
-				return;
-			}
-			needNext = true;
-			var dep = recipe.dependencies[depName];
-			var repo = this.pickRepo(dep);
-			if (!repo) {
-				repo = Repo.createRepo(this.baseDir, {
-					url: dep.repo,
-					ref: dep.ref
-				});
-				this.repos.push(repo);
-				repoPromises.push(repo.fetchIfNotInitialized());
-			}
-			result.dependencies[depName] = {
-				repo: repo
-			};
-		});
-		if (!needNext) {
-			return Promise.resolve(result);
-		}
-		return Promise.all(repoPromises)
-			.then(()=> {
-				var promises = Object.keys(recipe.dependencies).map((depName:string):Promise<void> => {
-					var dep = recipe.dependencies[depName];
-					var depResult = result.dependencies[depName];
-					if (depResult.content) {
-						return Promise.resolve(<void>null);
-					}
-					return depResult.repo.open(dep.ref).then(fs=> {
-						var info = fs.file(dep.path).then(fileInfo => {
-							depResult.fileInfo = fileInfo;
-						});
-						var content = fs.readFile(dep.path).then(content=> {
-							depResult.content = content;
-							recipe.postProcessForDependency(recipe, dep, content);
-						});
-						return Promise.all([info, content]);
-					}).catch((error:any)=> {
-						depResult.error = error;
-					});
-				});
-				return Promise.all(promises).then(()=> this.resolveDependencies(recipe, result));
-			});
-	}
-
-	pushAdditionalDependency(recipe:m.Recipe, baseDep:m.Dependency, relativePath:string) {
-		var depName = path.join(path.dirname(baseDep.name), relativePath);
-		if (!!recipe.dependencies[depName]) {
-			return;
-		}
-		recipe.dependencies[depName] = {
-			repo: baseDep.repo,
-			ref: baseDep.ref,
-			path: path.join(path.dirname(baseDep.path), relativePath),
-			name: depName
-		};
+		return new Result(this, recipe).resolveDependencies();
 	}
 
 	pickRepo(repo:Repo):Repo;
