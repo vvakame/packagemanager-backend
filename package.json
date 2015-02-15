@@ -1,7 +1,7 @@
 {
   "name": "packagemanager-backend",
   "author": "vvakame",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": false,
   "description": "package manager backend",
   "main": "./index",
