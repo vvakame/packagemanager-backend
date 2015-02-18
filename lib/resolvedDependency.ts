@@ -27,6 +27,21 @@ class ResolvedDependency {
 		return this.parent.depth + 1;
 	}
 
+	get cyclic():boolean {
+		return this.isCyclic(this.depName);
+	}
+
+	isCyclic(depName:string):boolean {
+		// NOTE not compare with this
+		if (!this.parent) {
+			return false;
+		} else if (this.parent.depName === depName) {
+			return true;
+		} else {
+			return this.parent.isCyclic(depName);
+		}
+	}
+
 	toJSON():any {
 		var obj:any = {};
 		var self:any = this;

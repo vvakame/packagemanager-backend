@@ -288,6 +288,38 @@ describe("Manager", () => {
 					});
 				});
 		});
+
+		it("can stop when cyclic dependencies", ()=> {
+			return Manager
+				.createManager({
+					rootDir: rootDir,
+					repos: []
+				})
+				.then(manager => {
+					return manager.getByRecipe({
+						baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+						baseRef: "master",
+						path: "typings",
+						dependencies: {
+							"node/node.d.ts": {
+								ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+							}
+						},
+						postProcessForDependency: (result, depResult, content) => {
+							result.pushAdditionalDependency("node/node.d.ts", {
+								repo: depResult.repo,
+								ref: depResult.ref,
+								path: "node/node.d.ts"
+							});
+						}
+					});
+				})
+				.then(result => {
+					assert(result.dependencies["node/node.d.ts"]);
+					assert(result.dependencies["node/node.d.ts"].dependencies["node/node.d.ts"]);
+					assert(result.dependenciesList.length === 1);
+				});
+		});
 	});
 
 	describe("#saveConfig", ()=> {

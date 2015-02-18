@@ -28,25 +28,23 @@ class Result {
 	}
 
 	pushAdditionalDependency(depName:string, dep:m.Dependency) {
-		if (this.pickDependency(depName)) {
+		if (this._current != null && this._current.isCyclic(depName)) {
 			return;
 		}
 
 		var deps = this.dependencies;
-		var depth = 1;
 		if (this._current) {
 			deps = this._current.dependencies;
-			depth = this._current.depth + 1;
 		}
+
 		dep.repo = dep.repo || this.recipe.baseRepo;
 		dep.ref = dep.ref || this.recipe.baseRef;
 		dep.path = dep.path || depName;
 
-		deps[depName] = new ResolvedDependency(this._current, dep);
-		var depResult = deps[depName];
+		var depResult = new ResolvedDependency(this._current, dep);
 		depResult.depName = depName;
-		depResult.depth = depth;
 		depResult.dependencies = {};
+		deps[depName] = depResult;
 	}
 
 	toDepNameAndPath(relativePath:string):{depName:string; path: string;} {
@@ -102,10 +100,6 @@ class Result {
 			});
 	}
 
-	pickDependency(depName:string):ResolvedDependency {
-		return this.dependenciesList.filter(dep => dep.depName === depName)[0];
-	}
-
 	get unresolvedDependencies():ResolvedDependency[] {
 		return this.dependenciesList.filter(dep => dep.content == null && !dep.error);
 	}
@@ -115,9 +109,11 @@ class Result {
 
 		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
 			Object.keys(deps).map(depName => {
-				var dep = deps[depName];
-				list.push(dep);
-				loop(dep.dependencies);
+				if (list.filter(dep => dep.depName === depName).length === 0) {
+					var dep = deps[depName];
+					list.push(dep);
+					loop(dep.dependencies);
+				}
 			});
 		};
 		loop(this.dependencies);

@@ -81,7 +81,6 @@ declare module 'packagemanager-backend/lib/result' {
             path: string;
         };
         resolveDependencies(): Promise<Result>;
-        pickDependency(depName: string): ResolvedDependency;
         unresolvedDependencies: ResolvedDependency[];
         dependenciesList: ResolvedDependency[];
         toJSON(): any;
@@ -108,6 +107,8 @@ declare module 'packagemanager-backend/lib/resolvedDependency' {
         };
         constructor(parent: ResolvedDependency, dep?: m.Dependency);
         depth: number;
+        cyclic: boolean;
+        isCyclic(depName: string): boolean;
         toJSON(): any;
     }
     export = ResolvedDependency;
