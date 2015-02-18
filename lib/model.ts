@@ -1,6 +1,7 @@
 import fsgit = require("fs-git");
 import Repo = require("./repo");
 import Result = require("./result");
+import ResolvedDependency = require("./resolvedDependency");
 
 export interface ManagerOptions {
 	rootDir: string;
@@ -35,17 +36,7 @@ export interface Recipe {
 	baseRef?: string;
 	path: string;
 	dependencies: {[name: string]: Dependency};
-	postProcessForDependency?(result:Result, depResult:DepResult, content:any): void;
-}
-
-export interface DepResult extends Dependency {
-	depName?: string;
-	repoInstance?: Repo;
-	error?: any;
-	fileInfo?: fsgit.FileInfo;
-	content?: Buffer;
-	depth?: number;
-	dependencies?: {[name: string]: DepResult};
+	postProcessForDependency?(result:Result, depResult:ResolvedDependency, content:any): void;
 }
 
 export interface Dependency {

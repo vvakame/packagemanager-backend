@@ -2,16 +2,17 @@ import path = require("path");
 
 import Manager = require("./manager");
 import Repo = require("./repo");
+import ResolvedDependency = require("./resolvedDependency");
 
 import utils = require("./utils");
 import m = require("./model");
 
 class Result {
 	dependencies:{
-		[depName: string]: m.DepResult;
+		[depName: string]: ResolvedDependency;
 	};
 
-	_current:m.DepResult;
+	_current:ResolvedDependency;
 
 	constructor(public manager:Manager<{}>, public recipe:m.Recipe) {
 		this.recipe = utils.deepClone(this.recipe);
@@ -41,7 +42,7 @@ class Result {
 		dep.ref = dep.ref || this.recipe.baseRef;
 		dep.path = dep.path || depName;
 
-		deps[depName] = dep;
+		deps[depName] = new ResolvedDependency(this._current, dep);
 		var depResult = deps[depName];
 		depResult.depName = depName;
 		depResult.depth = depth;
@@ -101,18 +102,18 @@ class Result {
 			});
 	}
 
-	pickDependency(depName:string):m.DepResult {
+	pickDependency(depName:string):ResolvedDependency {
 		return this.dependenciesList.filter(dep => dep.depName === depName)[0];
 	}
 
-	get unresolvedDependencies():m.DepResult[] {
+	get unresolvedDependencies():ResolvedDependency[] {
 		return this.dependenciesList.filter(dep => dep.content == null && !dep.error);
 	}
 
-	get dependenciesList():m.DepResult[] {
-		var list:m.DepResult[] = [];
+	get dependenciesList():ResolvedDependency[] {
+		var list:ResolvedDependency[] = [];
 
-		var loop = (deps:{[depName: string]: m.DepResult;} = {}) => {
+		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
 			Object.keys(deps).map(depName => {
 				var dep = deps[depName];
 				list.push(dep);
@@ -122,6 +123,19 @@ class Result {
 		loop(this.dependencies);
 
 		return list;
+	}
+
+	toJSON():any {
+		var obj:any = {};
+		var self:any = this;
+		for (var key in self) {
+			switch (key) {
+				case "dependencies":
+					obj[key] = self[key];
+				default:
+			}
+		}
+		return obj;
 	}
 }
 

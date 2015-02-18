@@ -7,6 +7,7 @@ declare module 'packagemanager-backend' {
     export import Manager = require("packagemanager-backend/lib/manager");
     export import Repo = require("packagemanager-backend/lib/repo");
     export import Result = require("packagemanager-backend/lib/result");
+    export import ResolvedDependency = require("packagemanager-backend/lib/resolvedDependency");
     import model = require("packagemanager-backend/lib/model");
     export import ManagerOptions = model.ManagerOptions;
     export import RepositorySpec = model.RepositorySpec;
@@ -14,7 +15,6 @@ declare module 'packagemanager-backend' {
     export import SearchOptions = model.SearchOptions;
     export import SearchResult = model.SearchResult;
     export import Recipe = model.Recipe;
-    export import DepResult = model.DepResult;
     export import Dependency = model.Dependency;
 }
 
@@ -65,14 +65,15 @@ declare module 'packagemanager-backend/lib/repo' {
 
 declare module 'packagemanager-backend/lib/result' {
     import Manager = require("packagemanager-backend/lib/manager");
+    import ResolvedDependency = require("packagemanager-backend/lib/resolvedDependency");
     import m = require("packagemanager-backend/lib/model");
     class Result {
         manager: Manager<{}>;
         recipe: m.Recipe;
         dependencies: {
-            [depName: string]: m.DepResult;
+            [depName: string]: ResolvedDependency;
         };
-        _current: m.DepResult;
+        _current: ResolvedDependency;
         constructor(manager: Manager<{}>, recipe: m.Recipe);
         pushAdditionalDependency(depName: string, dep: m.Dependency): void;
         toDepNameAndPath(relativePath: string): {
@@ -80,17 +81,43 @@ declare module 'packagemanager-backend/lib/result' {
             path: string;
         };
         resolveDependencies(): Promise<Result>;
-        pickDependency(depName: string): m.DepResult;
-        unresolvedDependencies: m.DepResult[];
-        dependenciesList: m.DepResult[];
+        pickDependency(depName: string): ResolvedDependency;
+        unresolvedDependencies: ResolvedDependency[];
+        dependenciesList: ResolvedDependency[];
+        toJSON(): any;
     }
     export = Result;
+}
+
+declare module 'packagemanager-backend/lib/resolvedDependency' {
+    import fsgit = require("fs-git");
+    import m = require("packagemanager-backend/lib/model");
+    import Repo = require("packagemanager-backend/lib/repo");
+    class ResolvedDependency {
+        parent: ResolvedDependency;
+        repo: string;
+        ref: string;
+        path: string;
+        depName: string;
+        repoInstance: Repo;
+        error: any;
+        fileInfo: fsgit.FileInfo;
+        content: Buffer;
+        dependencies: {
+            [name: string]: ResolvedDependency;
+        };
+        constructor(parent: ResolvedDependency, dep?: m.Dependency);
+        depth: number;
+        toJSON(): any;
+    }
+    export = ResolvedDependency;
 }
 
 declare module 'packagemanager-backend/lib/model' {
     import fsgit = require("fs-git");
     import Repo = require("packagemanager-backend/lib/repo");
     import Result = require("packagemanager-backend/lib/result");
+    import ResolvedDependency = require("packagemanager-backend/lib/resolvedDependency");
     export interface ManagerOptions {
         rootDir: string;
         repos: RepositorySpec[];
@@ -121,18 +148,7 @@ declare module 'packagemanager-backend/lib/model' {
         dependencies: {
             [name: string]: Dependency;
         };
-        postProcessForDependency?(result: Result, depResult: DepResult, content: any): void;
-    }
-    export interface DepResult extends Dependency {
-        depName?: string;
-        repoInstance?: Repo;
-        error?: any;
-        fileInfo?: fsgit.FileInfo;
-        content?: Buffer;
-        depth?: number;
-        dependencies?: {
-            [name: string]: DepResult;
-        };
+        postProcessForDependency?(result: Result, depResult: ResolvedDependency, content: any): void;
     }
     export interface Dependency {
         repo?: string;
