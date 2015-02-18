@@ -32,7 +32,6 @@ declare module 'packagemanager-backend/lib/manager' {
         fetchAllRepos(): Promise<Manager<T>>;
         search(opts?: m.SearchOptions): Promise<m.SearchResult[]>;
         getByRecipe(recipe: m.Recipe): Promise<Result>;
-        pickRepo(repo: Repo): Repo;
         pickRepo(dep: m.Dependency): Repo;
         saveConfig(data: T): void;
         loadConfig(): T;

@@ -117,31 +117,11 @@ class Manager<T> {
 	}
 
 	getByRecipe(recipe:m.Recipe):Promise<Result> {
-		recipe = utils.deepClone(recipe);
-		recipe.dependencies = recipe.dependencies || {};
-		Object.keys(recipe.dependencies).forEach(depName => {
-			var dep = recipe.dependencies[depName];
-			dep.repo = dep.repo || recipe.baseRepo;
-			dep.ref = dep.ref || recipe.baseRef;
-			dep.path = dep.path || depName;
-		});
-		recipe.postProcessForDependency = recipe.postProcessForDependency || (() => {
-			false;
-		});
-
 		return new Result(this, recipe).resolveDependencies();
 	}
 
-	pickRepo(repo:Repo):Repo;
-	pickRepo(dep:m.Dependency):Repo;
-	pickRepo(v:any):Repo {
-		if (v instanceof Repo) {
-			var repo:Repo = v;
-			return this.repos.filter(r => r.spec.url === repo.spec.url)[0];
-		} else if (v) {
-			var dep:m.Dependency = v;
-			return this.repos.filter(repo => repo.spec.url === dep.repo)[0];
-		}
+	pickRepo(dep:m.Dependency):Repo {
+		return this.repos.filter(repo => repo.spec.url === dep.repo)[0];
 	}
 
 	saveConfig(data:T) {

@@ -16,6 +16,12 @@ class Result {
 
 	constructor(public manager:Manager<{}>, public recipe:m.Recipe) {
 		this.recipe = utils.deepClone(this.recipe);
+		Object.keys(this.recipe.dependencies).forEach(depName => {
+			var dep = this.recipe.dependencies[depName];
+			dep.repo = dep.repo || this.recipe.baseRepo;
+			dep.ref = dep.ref || this.recipe.baseRef;
+			dep.path = dep.path || depName;
+		});
 		this.recipe.dependencies = this.recipe.dependencies || {};
 		this.recipe.postProcessForDependency = recipe.postProcessForDependency || (() => {
 			false;
