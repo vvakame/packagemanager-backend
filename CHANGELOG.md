@@ -1,3 +1,12 @@
+<a name="0.5.1"></a>
+### 0.5.1 (2015-02-20)
+
+
+#### Bug Fixes
+
+* **packagemanager-backend:** fix construct unresolvedDependencies logic ([6781978d](https://github.com/vvakame/packagemanager-backend/commit/6781978d7abfaf9124790397e16c3a77ff7e7205))
+
+
 <a name="0.5.0"></a>
 ## 0.5.0 (2015-02-19)
 
