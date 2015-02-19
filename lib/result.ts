@@ -107,7 +107,18 @@ class Result {
 	}
 
 	get unresolvedDependencies():ResolvedDependency[] {
-		return this.dependenciesList.filter(dep => dep.content == null && !dep.error);
+		var list:ResolvedDependency[] = [];
+
+		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
+			Object.keys(deps).map(depName => {
+				var dep = deps[depName];
+				list.push(dep);
+				loop(dep.dependencies);
+			});
+		};
+		loop(this.dependencies);
+
+		return list.filter(dep => dep.content == null && !dep.error);
 	}
 
 	get dependenciesList():ResolvedDependency[] {
