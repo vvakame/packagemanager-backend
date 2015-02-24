@@ -1,3 +1,12 @@
+<a name="0.6.1"></a>
+### 0.6.1 (2015-02-25)
+
+
+#### Bug Fixes
+
+* **packagemanager-backend:** detect and stop infinite loop in resolveMissingDependency ([d3840dba](https://github.com/vvakame/packagemanager-backend/commit/d3840dba428120c902ac0ae8f7295846212e1bd0))
+
+
 <a name="0.6.0"></a>
 ## 0.6.0 (2015-02-25)
 
