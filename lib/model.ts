@@ -3,6 +3,8 @@ import Repo = require("./repo");
 import Result = require("./result");
 import ResolvedDependency = require("./resolvedDependency");
 
+import m = require("./model");
+
 export interface ManagerOptions {
 	rootDir: string;
 	repos: RepositorySpec[];
@@ -37,6 +39,7 @@ export interface Recipe {
 	path: string;
 	dependencies: {[name: string]: Dependency};
 	postProcessForDependency?(result:Result, depResult:ResolvedDependency, content:any): void;
+	resolveMissingDependency?(result:Result, missing:ResolvedDependency): Promise<m.Dependency>;
 }
 
 export interface Dependency {

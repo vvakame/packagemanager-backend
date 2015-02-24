@@ -289,6 +289,44 @@ describe("Manager", () => {
 				});
 		});
 
+		it("with resolveMissingDependency", ()=> {
+			return Manager
+				.createManager({
+					rootDir: rootDir,
+					repos: []
+				})
+				.then(manager => {
+					return manager.getByRecipe({
+						baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+						baseRef: "master",
+						path: "typings",
+						dependencies: {
+							"node/node.d.ts": {
+								ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+							},
+							"noooooooooot-exists/noooooooooot-exists.d.ts": {
+								ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+							}
+						},
+						resolveMissingDependency: (result, dep) => {
+							if (dep.depName !== "noooooooooot-exists/noooooooooot-exists.d.ts") {
+								return null;
+							}
+							return Promise.resolve({
+								ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
+								path: "express/express.d.ts"
+							});
+						}
+					});
+				})
+				.then(result => {
+					assert(result.recipe);
+					assert(Object.keys(result.recipe.dependencies).length === 2);
+					assert(result.recipe.dependencies["noooooooooot-exists/noooooooooot-exists.d.ts"].path === "noooooooooot-exists/noooooooooot-exists.d.ts");
+					assert(result.dependencies["noooooooooot-exists/noooooooooot-exists.d.ts"].path === "express/express.d.ts");
+				});
+		});
+
 		it("can stop when cyclic dependencies", ()=> {
 			return Manager
 				.createManager({

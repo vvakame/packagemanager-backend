@@ -26,6 +26,9 @@ class Result {
 		this.recipe.postProcessForDependency = recipe.postProcessForDependency || (() => {
 			false;
 		});
+		this.recipe.resolveMissingDependency = recipe.resolveMissingDependency || (():Promise<m.Dependency> => {
+			return Promise.resolve(null);
+		});
 
 		this.dependencies = {};
 		Object.keys(this.recipe.dependencies).forEach(depName => {
@@ -33,21 +36,21 @@ class Result {
 		});
 	}
 
-	pushAdditionalDependency(depName:string, dep:m.Dependency) {
-		if (this._current != null && this._current.isCyclic(depName)) {
+	pushAdditionalDependency(depName:string, dep:m.Dependency, parent = this._current) {
+		if (parent != null && parent.isCyclic(depName)) {
 			return;
 		}
 
 		var deps = this.dependencies;
-		if (this._current) {
-			deps = this._current.dependencies;
+		if (parent) {
+			deps = parent.dependencies;
 		}
 
 		dep.repo = dep.repo || this.recipe.baseRepo;
 		dep.ref = dep.ref || this.recipe.baseRef;
 		dep.path = dep.path || depName;
 
-		var depResult = new ResolvedDependency(this._current, dep);
+		var depResult = new ResolvedDependency(parent, dep);
 		depResult.depName = depName;
 		depResult.dependencies = {};
 		deps[depName] = depResult;
@@ -96,17 +99,47 @@ class Result {
 								this.recipe.postProcessForDependency(this, dep, content);
 								this._current = null;
 							});
+							// TODO stop use Promise.all. it can't show pretty error print.
 							return Promise.all([info, content]);
-						}).catch((error:any)=> {
+						}).catch(error => {
 							dep.error = error;
+							return Promise.resolve(null)
+								.then(()=> {
+									this._current = dep;
+									var newDep = this.recipe.resolveMissingDependency(this, dep);
+									this._current = null;
+									return newDep;
+								})
+								.then(newDep => {
+									// put back `err` when resolveMissingDependency was failed.
+									if (!newDep) {
+										return Promise.reject(error);
+									}
+									newDep.repo = newDep.repo || dep.repo;
+									newDep.ref = newDep.ref || dep.ref;
+									newDep.path = newDep.path || dep.path;
+									var newDepResult = new ResolvedDependency(dep.parent, newDep);
+									newDepResult.depName = dep.depName;
+									newDepResult.dependencies = {};
+
+									// replace!
+									if (dep.parent) {
+										dep.parent.dependencies[dep.depName] = newDepResult;
+									} else {
+										this.dependencies[dep.depName] = newDepResult;
+									}
+									return Promise.resolve(null);
+								});
 						});
 					});
 
 				return Promise.all(promises).then(()=> this.resolveDependencies());
-			});
+			}
+		);
 	}
 
-	get unresolvedDependencies():ResolvedDependency[] {
+	get
+	unresolvedDependencies():ResolvedDependency[] {
 		var list:ResolvedDependency[] = [];
 
 		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
@@ -121,7 +154,8 @@ class Result {
 		return list.filter(dep => dep.content == null && !dep.error);
 	}
 
-	get dependenciesList():ResolvedDependency[] {
+	get
+	dependenciesList():ResolvedDependency[] {
 		var list:ResolvedDependency[] = [];
 
 		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {

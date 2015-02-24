@@ -74,7 +74,7 @@ declare module 'packagemanager-backend/lib/result' {
         };
         _current: ResolvedDependency;
         constructor(manager: Manager<{}>, recipe: m.Recipe);
-        pushAdditionalDependency(depName: string, dep: m.Dependency): void;
+        pushAdditionalDependency(depName: string, dep: m.Dependency, parent?: ResolvedDependency): void;
         toDepNameAndPath(relativePath: string): {
             depName: string;
             path: string;
@@ -118,6 +118,7 @@ declare module 'packagemanager-backend/lib/model' {
     import Repo = require("packagemanager-backend/lib/repo");
     import Result = require("packagemanager-backend/lib/result");
     import ResolvedDependency = require("packagemanager-backend/lib/resolvedDependency");
+    import m = require("packagemanager-backend/lib/model");
     export interface ManagerOptions {
         rootDir: string;
         repos: RepositorySpec[];
@@ -149,6 +150,7 @@ declare module 'packagemanager-backend/lib/model' {
             [name: string]: Dependency;
         };
         postProcessForDependency?(result: Result, depResult: ResolvedDependency, content: any): void;
+        resolveMissingDependency?(result: Result, missing: ResolvedDependency): Promise<m.Dependency>;
     }
     export interface Dependency {
         repo?: string;
