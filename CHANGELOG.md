@@ -1,3 +1,12 @@
+<a name="0.6.0"></a>
+## 0.6.0 (2015-02-25)
+
+
+#### Features
+
+* **packagemanager-backend:** add resolveMissingDependency method to Recipe interface and implement handling it ([2072375a](https://github.com/vvakame/packagemanager-backend/commit/2072375ac8815a7fc0620296b897aafb2441cd87))
+
+
 <a name="0.5.1"></a>
 ### 0.5.1 (2015-02-20)
 
