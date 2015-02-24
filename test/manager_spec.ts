@@ -327,6 +327,33 @@ describe("Manager", () => {
 				});
 		});
 
+		it("can stop inifinite loop with resolveMissingDependency", ()=> {
+			return Manager
+				.createManager({
+					rootDir: rootDir,
+					repos: []
+				})
+				.then(manager => {
+					return manager.getByRecipe({
+						baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+						baseRef: "master",
+						path: "typings",
+						dependencies: {
+							"noooooooooot-exists/noooooooooot-exists.d.ts": {
+								ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+							}
+						},
+						resolveMissingDependency: (result, dep) => {
+							return Promise.resolve(dep);
+						}
+					});
+				}).then(()=> {
+					return Promise.reject("");
+				}, ()=> {
+					return null;
+				});
+		});
+
 		it("can stop when cyclic dependencies", ()=> {
 			return Manager
 				.createManager({

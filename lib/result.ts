@@ -108,7 +108,17 @@ class Result {
 									this._current = dep;
 									var newDep = this.recipe.resolveMissingDependency(this, dep);
 									this._current = null;
-									return newDep;
+									return newDep.then(newDep => {
+										if (newDep) {
+											if (newDep.repo === dep.repo && newDep.ref === dep.ref && newDep.path === dep.path) {
+												// stop infinite loop, but can't detect cyclic pattern. e.g. a -> b -> a -> b -> ...
+												return null;
+											}
+											return newDep;
+										} else {
+											return null;
+										}
+									});
 								})
 								.then(newDep => {
 									// put back `err` when resolveMissingDependency was failed.
