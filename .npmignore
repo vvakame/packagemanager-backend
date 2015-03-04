@@ -13,6 +13,7 @@ typings/
 
 # codes
 test/
+test-repository/
 
 # misc
 .gitignore
@@ -25,3 +26,4 @@ tslint.json
 
 test-results.xml
 npm-debug.log
+
