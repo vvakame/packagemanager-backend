@@ -1,3 +1,12 @@
+<a name="0.6.2"></a>
+### 0.6.2 (2015-03-13)
+
+
+#### Bug Fixes
+
+* **deps:** add test-repository to .npmignore ([b63d1dc2](https://github.com/vvakame/packagemanager-backend/commit/b63d1dc21cd20fe8eb80ea4d75d236fba9ee7617))
+
+
 <a name="0.6.1"></a>
 ### 0.6.1 (2015-02-25)
 
