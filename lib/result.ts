@@ -108,7 +108,7 @@ class Result {
 									this._current = dep;
 									var newDep = this.recipe.resolveMissingDependency(this, dep);
 									this._current = null;
-									return newDep.then(newDep => {
+									return Promise.resolve(newDep).then(newDep => {
 										if (newDep) {
 											if (newDep.repo === dep.repo && newDep.ref === dep.ref && newDep.path === dep.path) {
 												// stop infinite loop, but can't detect cyclic pattern. e.g. a -> b -> a -> b -> ...

@@ -1,3 +1,12 @@
+<a name="0.6.3"></a>
+### 0.6.3 (2015-03-23)
+
+
+#### Bug Fixes
+
+* **packagemanager-backend:** add care of null value from resolveMissingDependency refs #1 ([b6ddbbfd](https://github.com/vvakame/packagemanager-backend/commit/b6ddbbfde0ea8377efe82d28fae0e81ebf63ee50))
+
+
 <a name="0.6.2"></a>
 ### 0.6.2 (2015-03-13)
 
