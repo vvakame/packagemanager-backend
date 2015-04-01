@@ -9,22 +9,22 @@
   "bundle": "typings/bundle.d.ts",
   "dependencies": {
     "es6-promise/es6-promise.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "32bb5fea1c1a00a0f4d44523b75849fe60e97bee"
     },
     "node/node.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "32bb5fea1c1a00a0f4d44523b75849fe60e97bee"
     },
     "mkdirp/mkdirp.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "32bb5fea1c1a00a0f4d44523b75849fe60e97bee"
     },
     "minimatch/minimatch.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "32bb5fea1c1a00a0f4d44523b75849fe60e97bee"
     },
     "mocha/mocha.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "32bb5fea1c1a00a0f4d44523b75849fe60e97bee"
     },
     "power-assert/power-assert.d.ts": {
-      "ref": "32f0a90dab26f70b206407ac24d4d622d0f0f408"
+      "ref": "32bb5fea1c1a00a0f4d44523b75849fe60e97bee"
     }
   }
 }
