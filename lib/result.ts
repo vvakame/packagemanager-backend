@@ -57,9 +57,14 @@ class Result {
 	}
 
 	toDepNameAndPath(relativePath:string):{depName:string; path: string;} {
-		// (windows) for git cli
-		var depName = path.posix.join(path.dirname(this._current.depName), relativePath);
-		var depPath = path.posix.join(path.dirname(this._current.path), relativePath);
+		var depName = path.join(path.dirname(this._current.depName), relativePath);
+		var depPath = path.join(path.dirname(this._current.path), relativePath);
+		if (!/^0\.10/.test(process.versions.node)) {
+			// (windows) for git cli
+			// path.posix are exists after node v0.12
+			depName = path.posix.join(path.dirname(this._current.depName), relativePath);
+			depPath = path.posix.join(path.dirname(this._current.path), relativePath);
+		}
 		return {
 			depName: depName,
 			path: depPath
