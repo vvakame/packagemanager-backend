@@ -57,8 +57,9 @@ class Result {
 	}
 
 	toDepNameAndPath(relativePath:string):{depName:string; path: string;} {
-		var depName = path.join(path.dirname(this._current.depName), relativePath);
-		var depPath = path.join(path.dirname(this._current.path), relativePath);
+		// (windows) for git cli
+		var depName = path.posix.join(path.dirname(this._current.depName), relativePath);
+		var depPath = path.posix.join(path.dirname(this._current.path), relativePath);
 		return {
 			depName: depName,
 			path: depPath
