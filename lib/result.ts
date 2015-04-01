@@ -148,8 +148,7 @@ class Result {
 		);
 	}
 
-	get
-	unresolvedDependencies():ResolvedDependency[] {
+	get unresolvedDependencies():ResolvedDependency[] {
 		var list:ResolvedDependency[] = [];
 
 		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
@@ -164,8 +163,7 @@ class Result {
 		return list.filter(dep => dep.content == null && !dep.error);
 	}
 
-	get
-	dependenciesList():ResolvedDependency[] {
+	get dependenciesList():ResolvedDependency[] {
 		var list:ResolvedDependency[] = [];
 
 		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
