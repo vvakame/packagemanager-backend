@@ -1,3 +1,12 @@
+<a name"0.6.5"></a>
+### 0.6.5 (2015-04-02)
+
+
+#### Bug Fixes
+
+* **packagemanager-backend:** fix for node v0.10 ([d09cb84f](https://github.com/vvakame/packagemanager-backend/commit/d09cb84f))
+
+
 <a name"0.6.4"></a>
 ### 0.6.4 (2015-04-02)
 
