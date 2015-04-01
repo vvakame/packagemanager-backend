@@ -1,6 +1,6 @@
 {
   "name": "packagemanager-backend",
-  "version": "0.6.3",
+  "version": "0.6.5",
   "dependencies": {
     "es6-promise": {
       "version": "2.0.1",
@@ -151,7 +151,7 @@
                 },
                 "type-name": {
                   "version": "1.0.1",
-                  "from": "type-name@>=1.0.0 <1.1.0",
+                  "from": "type-name@>=1.0.1 <1.1.0",
                   "resolved": "https://registry.npmjs.org/type-name/-/type-name-1.0.1.tgz"
                 }
               }
@@ -311,7 +311,7 @@
         },
         "minimatch": {
           "version": "0.2.14",
-          "from": "minimatch@>=0.2.11 <0.3.0",
+          "from": "minimatch@>=0.2.12 <0.3.0",
           "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-0.2.14.tgz",
           "dependencies": {
             "lru-cache": {
@@ -355,7 +355,7 @@
         },
         "which": {
           "version": "1.0.9",
-          "from": "which@1.0.9",
+          "from": "which@>=1.0.5 <1.1.0",
           "resolved": "https://registry.npmjs.org/which/-/which-1.0.9.tgz"
         },
         "js-yaml": {
@@ -865,7 +865,7 @@
             },
             "glob": {
               "version": "4.5.3",
-              "from": "glob@>=4.4.2 <5.0.0",
+              "from": "glob@>=4.0.2 <5.0.0",
               "resolved": "https://registry.npmjs.org/glob/-/glob-4.5.3.tgz",
               "dependencies": {
                 "inflight": {
@@ -904,14 +904,12 @@
       }
     },
     "grunt-dtsm": {
-      "version": "0.2.7",
-      "from": "grunt-dtsm@0.2.7",
-      "resolved": "https://registry.npmjs.org/grunt-dtsm/-/grunt-dtsm-0.2.7.tgz",
+      "version": "0.2.8",
+      "from": "grunt-dtsm@0.2.8",
       "dependencies": {
         "dtsm": {
-          "version": "0.8.2",
-          "from": "dtsm@>=0.8.1 <0.9.0",
-          "resolved": "https://registry.npmjs.org/dtsm/-/dtsm-0.8.2.tgz",
+          "version": "0.9.1",
+          "from": "dtsm@>=0.9.1 <0.10.0",
           "dependencies": {
             "archy": {
               "version": "1.0.0",
@@ -1067,7 +1065,7 @@
                     },
                     "lodash": {
                       "version": "3.6.0",
-                      "from": "lodash@>=3.2.0 <4.0.0",
+                      "from": "lodash@>=3.3.1 <4.0.0",
                       "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.6.0.tgz"
                     },
                     "readline2": {
@@ -1382,9 +1380,8 @@
               }
             },
             "packagemanager-backend": {
-              "version": "0.6.3",
-              "from": "packagemanager-backend@0.6.3",
-              "resolved": "https://registry.npmjs.org/packagemanager-backend/-/packagemanager-backend-0.6.3.tgz"
+              "version": "0.6.5",
+              "from": "packagemanager-backend@0.6.5"
             },
             "rimraf": {
               "version": "2.3.2",
@@ -1711,7 +1708,7 @@
                   "dependencies": {
                     "semver": {
                       "version": "4.3.3",
-                      "from": "semver@>=2.0.0 <3.0.0||>=3.0.0 <4.0.0||>=4.0.0 <5.0.0",
+                      "from": "semver@>=4.0.0 <5.0.0",
                       "resolved": "https://registry.npmjs.org/semver/-/semver-4.3.3.tgz"
                     }
                   }
