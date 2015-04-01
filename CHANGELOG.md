@@ -1,3 +1,13 @@
+<a name"0.6.4"></a>
+### 0.6.4 (2015-04-02)
+
+
+#### Features
+
+* **ci:** add appveyor.yml ([5236ee07](https://github.com/vvakame/packagemanager-backend/commit/5236ee07))
+* **packagemanager-backend:** fix for windows git client ([2d4a8ddc](https://github.com/vvakame/packagemanager-backend/commit/2d4a8ddc))
+
+
 <a name="0.6.3"></a>
 ### 0.6.3 (2015-03-23)
 
