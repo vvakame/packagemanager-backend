@@ -3,8 +3,8 @@
 require("es6-promise").polyfill();
 
 try {
-	// optional
-	require("source-map-support").install();
+    // optional
+    require("source-map-support").install();
 } catch (e) {
 }
 
