@@ -1,3 +1,18 @@
+<a name="0.7.0"></a>
+# [0.7.0](https://github.com/vvakame/packagemanager-backend/compare/0.6.5...v0.7.0) (2015-09-22)
+
+
+### Bug Fixes
+
+* **packagemanager-backend:** fix tests for Windows environment ([27ae515](https://github.com/vvakame/packagemanager-backend/commit/27ae515))
+
+### Features
+
+* **packagemanager-backend:** change api to es6 style ([5c7dbe9](https://github.com/vvakame/packagemanager-backend/commit/5c7dbe9))
+* **packagemanager-backend:** update dependencies & switch to tsconfig.json oriented style ([f002674](https://github.com/vvakame/packagemanager-backend/commit/f002674))
+
+
+
 <a name"0.6.5"></a>
 ### 0.6.5 (2015-04-02)
 
