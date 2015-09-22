@@ -1,14 +1,14 @@
 "use strict";
 
-import Manager = require("../lib/manager");
+import Manager from "../lib/manager";
 
-import path = require("path");
-import fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
 
-import assert = require("power-assert");
+import * as assert from "power-assert";
 
 describe("Manager", () => {
-	var rootDir = path.resolve(__dirname, "../test-repository");
+	let rootDir = path.resolve(__dirname, "../test-repository");
 
 	describe(".createManager", ()=> {
 		it("create rootDir", ()=> {
@@ -36,7 +36,7 @@ describe("Manager", () => {
 					return manager.fetchAllRepos();
 				})
 				.then(manager => {
-					var repo = manager.repos[0];
+					let repo = manager.repos[0];
 					assert(!!repo);
 
 					return repo.open("master").then(fs=> {
@@ -63,7 +63,7 @@ describe("Manager", () => {
 						.then(resultList => {
 							assert(resultList.length !== 0);
 							// not filtered
-							var excludePatterns = [/^notExsitsPattern$/];
+							let excludePatterns = [/^notExsitsPattern$/];
 							resultList.forEach(result => {
 								assert(excludePatterns.every(regexp => !regexp.test(result.fileInfo.path)));
 							});
@@ -87,8 +87,8 @@ describe("Manager", () => {
 						.then(resultList => {
 							assert(resultList.length !== 0);
 
-							var includePatterns = [/\.d\.ts$/, /\.ts$/];
-							var excludePatterns = [/\.js$/, /\.tscparams$/, /\.md$/];
+							let includePatterns = [/\.d\.ts$/, /\.ts$/];
+							let excludePatterns = [/\.js$/, /\.tscparams$/, /\.md$/];
 							resultList.forEach(result => {
 								assert(includePatterns.some(regexp => regexp.test(result.fileInfo.path)));
 								assert(excludePatterns.every(regexp => !regexp.test(result.fileInfo.path)));
@@ -116,8 +116,8 @@ describe("Manager", () => {
 						.then(resultList => {
 							assert(resultList.length !== 0);
 
-							var includePatterns = [/\.ts$/];
-							var excludePatterns = [/\.js$/, /\.d\.ts$/, /\.tscparams$/, /\.md$/];
+							let includePatterns = [/\.ts$/];
+							let excludePatterns = [/\.js$/, /\.d\.ts$/, /\.tscparams$/, /\.md$/];
 							resultList.forEach(result => {
 								assert(includePatterns.some(regexp => regexp.test(result.fileInfo.path)));
 								assert(excludePatterns.every(regexp => !regexp.test(result.fileInfo.path)));
@@ -207,7 +207,7 @@ describe("Manager", () => {
 					assert(Object.keys(result.dependencies).length === 2);
 					assert(Object.keys(result.dependencies).every(depName => !result.dependencies[depName].error));
 					Object.keys(result.dependencies).forEach(depName=> {
-						var dep = result.dependencies[depName];
+						let dep = result.dependencies[depName];
 						assert(dep.repo);
 						// assert(dep.repo.networkConnectivity); // offlineFirst
 						assert(dep.repoInstance.fetchError == null);
@@ -240,15 +240,15 @@ describe("Manager", () => {
 							}
 						},
 						postProcessForDependency: (result, depResult, content) => {
-							var reference = /\/\/\/\s+<reference\s+path=["']([^"']*)["']\s*\/>/;
-							var body:string = content.toString("utf8");
+							let reference = /\/\/\/\s+<reference\s+path=["']([^"']*)["']\s*\/>/;
+							let body:string = content.toString("utf8");
 							body
 								.split("\n")
 								.map(line => line.match(reference))
 								.filter(matches => !!matches)
 								.forEach(matches => {
-									var relativePath = matches[1];
-									var obj = result.toDepNameAndPath(relativePath);
+									let relativePath = matches[1];
+									let obj = result.toDepNameAndPath(relativePath);
 									result.pushAdditionalDependency(obj.depName, {
 										repo: depResult.repo,
 										ref: depResult.ref,
@@ -390,7 +390,7 @@ describe("Manager", () => {
 	});
 
 	describe("#saveConfig", ()=> {
-		var configPath = path.resolve(rootDir, "config.json");
+		let configPath = path.resolve(rootDir, "config.json");
 
 		beforeEach(()=> {
 			if (fs.existsSync(configPath)) {
@@ -413,7 +413,7 @@ describe("Manager", () => {
 	});
 
 	describe("#loadConfig", ()=> {
-		var configPath = path.resolve(rootDir, "config.json");
+		let configPath = path.resolve(rootDir, "config.json");
 
 		beforeEach(()=> {
 			if (fs.existsSync(configPath)) {
@@ -429,7 +429,7 @@ describe("Manager", () => {
 				repos: []
 			})
 				.then(manager => {
-					var data = manager.loadConfig();
+					let data = manager.loadConfig();
 					assert(data.boolean === true);
 				});
 		});

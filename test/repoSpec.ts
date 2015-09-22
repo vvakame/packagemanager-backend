@@ -1,18 +1,18 @@
 "use strict";
 
-import path = require("path");
+import * as path from "path";
 
-import Repo = require("../lib/repo");
-import utils = require("../lib/utils");
+import Repo from "../lib/repo";
+import * as utils from "../lib/utils";
 
-import assert = require("power-assert");
+import * as assert from "power-assert";
 
 describe("Repo", () => {
-	var rootDir = path.resolve(__dirname, "../test-repository");
+	let rootDir = path.resolve(__dirname, "../test-repository");
 
 	describe("#constructor", ()=> {
 		it("can parse http style url", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "https://github.com/vvakame/dotfiles.git"
 			});
 
@@ -21,7 +21,7 @@ describe("Repo", () => {
 		});
 
 		it("can parse ssh style url", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "git@github.com:vvakame/fs-git.git"
 			});
 
@@ -32,7 +32,7 @@ describe("Repo", () => {
 
 	describe("#_resolveTargetDir", ()=> {
 		it("can solve targetDir (exclude home dir) by http url", ()=> {
-			var repo = Repo.createRepo("/tmp/foobar", {
+			let repo = Repo.createRepo("/tmp/foobar", {
 				url: "https://github.com/vvakame/dotfiles.git"
 			});
 
@@ -44,7 +44,7 @@ describe("Repo", () => {
 		});
 
 		it("can solve targetDir (include home dir) by http url", ()=> {
-			var repo = Repo.createRepo("~/foobar", {
+			let repo = Repo.createRepo("~/foobar", {
 				url: "https://github.com/vvakame/dotfiles.git"
 			});
 
@@ -56,7 +56,7 @@ describe("Repo", () => {
 		});
 
 		it("can solve targetDir (exclude home dir) by ssh url", ()=> {
-			var repo = Repo.createRepo("/tmp/foobar", {
+			let repo = Repo.createRepo("/tmp/foobar", {
 				url: "git@github.com:vvakame/fs-git.git"
 			});
 
@@ -68,7 +68,7 @@ describe("Repo", () => {
 		});
 
 		it("can solve targetDir (include home dir) by ssh url", ()=> {
-			var repo = Repo.createRepo("~/foobar", {
+			let repo = Repo.createRepo("~/foobar", {
 				url: "git@github.com:vvakame/fs-git.git"
 			});
 
@@ -82,7 +82,7 @@ describe("Repo", () => {
 
 	describe("#fetchIfNotInitialized", ()=> {
 		it("succeed if this.targetDir is specified", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "https://github.com/vvakame/fs-git.git"
 			});
 
@@ -90,7 +90,7 @@ describe("Repo", () => {
 		});
 
 		it("failed if this.targetDir is not specified", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "https://github.com/vvakame/fs-git.git"
 			});
 
@@ -106,7 +106,7 @@ describe("Repo", () => {
 
 	describe("#fetchAll", ()=> {
 		it("can fetch from remote repo", ()=> {
-			var repo = Repo
+			let repo = Repo
 				.createRepo(rootDir, {
 					url: "https://github.com/vvakame/fs-git.git"
 				});
@@ -121,7 +121,7 @@ describe("Repo", () => {
 		});
 
 		it("can't fetch from invalid remote repo", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "git@github.com:vvakame/notExistsForever.git"
 			});
 
@@ -135,7 +135,7 @@ describe("Repo", () => {
 		});
 
 		it("can'n fetch from unresolved host", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "git@not-exists.vvakame.net:hostNotExistsForever.git"
 			});
 
@@ -160,18 +160,18 @@ describe("Repo", () => {
 
 	describe("#_buildCommand", ()=> {
 		it("can construct command. it include --git-dir option", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "https://github.com/vvakame/fs-git.git"
 			});
 
-			var command = repo._buildCommand("log");
+			let command = repo._buildCommand("log");
 			assert(command === "git --git-dir=" + path.resolve(rootDir, "git/github.com/vvakame/fs-git") + " log");
 		});
 	});
 
 	describe("#open", ()=> {
 		it("can open fs-git", ()=> {
-			var repo = Repo.createRepo(rootDir, {
+			let repo = Repo.createRepo(rootDir, {
 				url: "https://github.com/vvakame/fs-git.git"
 			});
 

@@ -1,23 +1,23 @@
 "use strict";
 
-import url = require("url");
-import fs = require("fs");
-import path = require("path");
-import dns = require("dns");
-import mkdirp = require("mkdirp");
-import child_process = require("child_process");
+import * as url from "url";
+import * as fs from "fs";
+import * as path from "path";
+import * as dns from "dns";
+import * as mkdirp from "mkdirp";
+import * as child_process from "child_process";
 
-import fsgit = require("fs-git");
+import * as fsgit from "fs-git";
 
-import m = require("./model");
-import utils = require("./utils");
+import * as m from "./model";
+import * as utils from "./utils";
 
-var debug:any = () => {
+let debug:any = () => {
 };
 
-class Repo {
+export default class Repo {
 	static createRepo(baseDir:string, spec:m.RepositorySpec):Repo {
-		var _repo = new Repo(spec);
+		let _repo = new Repo(spec);
 		_repo._resolveTargetDir(baseDir);
 		return _repo;
 	}
@@ -34,13 +34,13 @@ class Repo {
 		this.spec = utils.deepClone(this.spec);
 		this.spec.ref = this.spec.ref || "master";
 
-		var urlInfo = url.parse(spec.url);
+		let urlInfo = url.parse(spec.url);
 		if (urlInfo.protocol) {
 			this.urlInfo = urlInfo;
 			return;
 		}
 
-		var matches = spec.url.match(/^([^@]+)@([^:]+):(.*)$/);
+		let matches = spec.url.match(/^([^@]+)@([^:]+):(.*)$/);
 		if (matches) {
 			this.sshInfo = {
 				user: matches[1],
@@ -55,14 +55,14 @@ class Repo {
 
 	_resolveTargetDir(baseDir:string) {
 		if (baseDir.indexOf("~/") === 0) {
-			var homeDir = utils.homeDir();
+			let homeDir = utils.homeDir();
 			baseDir = path.resolve(homeDir, baseDir.substr(2));
 		}
 
-		var endWithDotGit = /\.git$/.test(this.spec.url);
-		var type = "git";
-		var targetHost:string;
-		var targetPath:string;
+		let endWithDotGit = /\.git$/.test(this.spec.url);
+		let type = "git";
+		let targetHost:string;
+		let targetPath:string;
 
 		if (this.urlInfo) {
 			// e.g. https://github.com/borisyankov/DefinitelyTyped.git
@@ -98,7 +98,7 @@ class Repo {
 			this.alreadyTryFetchAll = true;
 
 			// check network connectivity
-			var hostname:string;
+			let hostname:string;
 			if (this.urlInfo) {
 				hostname = this.urlInfo.hostname;
 			} else if (this.sshInfo) {
@@ -109,7 +109,7 @@ class Repo {
 			dns.resolve(hostname, err => {
 				this.networkConnectivity = !err;
 				if (this.networkConnectivity) {
-					var command:string;
+					let command:string;
 					if (fs.existsSync(this.targetDir)) {
 						command = this._buildCommand("fetch", "--all");
 					} else {
@@ -152,5 +152,3 @@ class Repo {
 		});
 	}
 }
-
-export = Repo;

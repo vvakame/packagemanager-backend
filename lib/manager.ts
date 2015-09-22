@@ -1,19 +1,19 @@
 "use strict";
 
-import fs = require("fs");
-import path = require("path");
-import minimatch = require("minimatch");
-import mkdirp = require("mkdirp");
+import * as fs from "fs";
+import * as path from "path";
+import * as minimatch from "minimatch";
+import * as mkdirp from "mkdirp";
 
-import utils = require("./utils");
+import * as utils from "./utils";
 
-import Repo = require("./repo");
-import Result = require("./result");
-import m = require("./model");
+import Repo from "./repo";
+import Result from "./result";
+import * as m from "./model";
 
-class Manager<T> {
+export default class Manager<T> {
 	static createManager<T>(options:m.ManagerOptions):Promise<Manager<T>> {
-		var manager = new Manager();
+		let manager = new Manager();
 		manager._check(options);
 		manager._resolveBaseDir(options);
 		return manager
@@ -35,8 +35,8 @@ class Manager<T> {
 	}
 
 	_resolveBaseDir(options:m.ManagerOptions):void {
-		var homeDir = utils.homeDir();
-		var containsHomeDir = options.rootDir.indexOf("~/") === 0;
+		let homeDir = utils.homeDir();
+		let containsHomeDir = options.rootDir.indexOf("~/") === 0;
 		if (containsHomeDir) {
 			this.baseDir = path.resolve(homeDir, options.rootDir.substr(2));
 		} else {
@@ -46,7 +46,7 @@ class Manager<T> {
 	}
 
 	_resolveRepos(options:m.ManagerOptions):Promise<Repo[]> {
-		var promises = options.repos.map(repo => {
+		let promises = options.repos.map(repo => {
 			// TODO remove duplicated repo
 			return Repo
 				.createRepo(this.baseDir, repo)
@@ -59,7 +59,7 @@ class Manager<T> {
 	}
 
 	fetchAllRepos():Promise<Manager<T>> {
-		var promises = this.repos.map(repo => repo.fetchAll());
+		let promises = this.repos.map(repo => repo.fetchAll());
 		return Promise.all(promises).then(()=> this);
 	}
 
@@ -71,8 +71,8 @@ class Manager<T> {
 		}
 
 		return Promise.resolve(this.repos).then(repos=> {
-			var resultList:m.SearchResult[] = [];
-			var promises = repos.map(repo=> {
+			let resultList:m.SearchResult[] = [];
+			let promises = repos.map(repo=> {
 				return repo.open()
 					.then(fs=> fs.fileList())
 					.then(fileList => {
@@ -89,13 +89,13 @@ class Manager<T> {
 			if (opts.globPatterns.length === 0) {
 				return resultList;
 			}
-			var filteredList:m.SearchResult[] = [];
+			let filteredList:m.SearchResult[] = [];
 			opts.globPatterns.forEach(pattern=> {
-				var exclusion = pattern.indexOf("!") === 0;
-				var match = minimatch.filter(exclusion ? pattern.substr(1) : pattern);
+				let exclusion = pattern.indexOf("!") === 0;
+				let match = minimatch.filter(exclusion ? pattern.substr(1) : pattern);
 				resultList.forEach((result, i, ary) => {
 					if (match(result.fileInfo.path, i, null)) {
-						var index = filteredList.indexOf(result);
+						let index = filteredList.indexOf(result);
 						if (!exclusion && index === -1) {
 							filteredList.push(result);
 						} else if (exclusion && index !== -1) {
@@ -130,19 +130,17 @@ class Manager<T> {
 		if (data == null) {
 			throw new Error("data is required");
 		}
-		var configPath = path.resolve(this.baseDir, "config.json");
+		let configPath = path.resolve(this.baseDir, "config.json");
 		fs.writeFileSync(configPath, JSON.stringify(data, null, 2));
 	}
 
 	loadConfig():T {
-		var configPath = path.resolve(this.baseDir, "config.json");
+		let configPath = path.resolve(this.baseDir, "config.json");
 		if (fs.existsSync(configPath)) {
-			var dataStr = fs.readFileSync(configPath, "utf8");
+			let dataStr = fs.readFileSync(configPath, "utf8");
 			return JSON.parse(dataStr);
 		} else {
 			return null;
 		}
 	}
 }
-
-export = Manager;

@@ -1,15 +1,15 @@
 "use strict";
 
-import path = require("path");
+import * as path from "path";
 
-import Manager = require("./manager");
-import Repo = require("./repo");
-import ResolvedDependency = require("./resolvedDependency");
+import Manager from "./manager";
+import Repo from "./repo";
+import ResolvedDependency from "./resolvedDependency";
 
-import utils = require("./utils");
-import m = require("./model");
+import * as utils from "./utils";
+import * as m from "./model";
 
-class Result {
+export default class Result {
 	dependencies:{
 		[depName: string]: ResolvedDependency;
 	};
@@ -19,7 +19,7 @@ class Result {
 	constructor(public manager:Manager<{}>, public recipe:m.Recipe) {
 		this.recipe = utils.deepClone(this.recipe);
 		Object.keys(this.recipe.dependencies).forEach(depName => {
-			var dep = this.recipe.dependencies[depName];
+			let dep = this.recipe.dependencies[depName];
 			dep.repo = dep.repo || this.recipe.baseRepo;
 			dep.ref = dep.ref || this.recipe.baseRef;
 			dep.path = dep.path || depName;
@@ -43,7 +43,7 @@ class Result {
 			return;
 		}
 
-		var deps = this.dependencies;
+		let deps = this.dependencies;
 		if (parent) {
 			deps = parent.dependencies;
 		}
@@ -52,15 +52,15 @@ class Result {
 		dep.ref = dep.ref || this.recipe.baseRef;
 		dep.path = dep.path || depName;
 
-		var depResult = new ResolvedDependency(parent, dep);
+		let depResult = new ResolvedDependency(parent, dep);
 		depResult.depName = depName;
 		depResult.dependencies = {};
 		deps[depName] = depResult;
 	}
 
 	toDepNameAndPath(relativePath:string):{depName:string; path: string;} {
-		var depName = path.join(path.dirname(this._current.depName), relativePath);
-		var depPath = path.join(path.dirname(this._current.path), relativePath);
+		let depName = path.join(path.dirname(this._current.depName), relativePath);
+		let depPath = path.join(path.dirname(this._current.path), relativePath);
 		if (path.posix) {
 			// (windows) for git cli
 			// path.posix are exists after node v0.12
@@ -74,11 +74,11 @@ class Result {
 	}
 
 	resolveDependencies():Promise<Result> {
-		var repoPromises:Promise<Repo>[] = [];
-		var needNext = false;
+		let repoPromises:Promise<Repo>[] = [];
+		let needNext = false;
 		this.unresolvedDependencies.forEach(dep => {
 			needNext = true;
-			var repo = this.manager.pickRepo(dep);
+			let repo = this.manager.pickRepo(dep);
 			if (!repo) {
 				repo = Repo.createRepo(this.manager.baseDir, {
 					url: dep.repo,
@@ -94,14 +94,14 @@ class Result {
 		}
 		return Promise.all(repoPromises)
 			.then(()=> {
-				var promises = this
+				let promises = this
 					.unresolvedDependencies
 					.map(dep => {
 						return dep.repoInstance.open(dep.ref).then(fs=> {
-							var info = fs.file(dep.path).then(fileInfo => {
+							let info = fs.file(dep.path).then(fileInfo => {
 								dep.fileInfo = fileInfo;
 							});
-							var content = fs.readFile(dep.path).then(content=> {
+							let content = fs.readFile(dep.path).then(content=> {
 								dep.content = content;
 								this._current = dep;
 								this.recipe.postProcessForDependency(this, dep, content);
@@ -114,7 +114,7 @@ class Result {
 							return Promise.resolve(null)
 								.then(()=> {
 									this._current = dep;
-									var newDep = this.recipe.resolveMissingDependency(this, dep);
+									let newDep = this.recipe.resolveMissingDependency(this, dep);
 									this._current = null;
 									return Promise.resolve(newDep).then(newDep => {
 										if (newDep) {
@@ -136,7 +136,7 @@ class Result {
 									newDep.repo = newDep.repo || dep.repo;
 									newDep.ref = newDep.ref || dep.ref;
 									newDep.path = newDep.path || dep.path;
-									var newDepResult = new ResolvedDependency(dep.parent, newDep);
+									let newDepResult = new ResolvedDependency(dep.parent, newDep);
 									newDepResult.depName = dep.depName;
 									newDepResult.dependencies = {};
 
@@ -157,11 +157,11 @@ class Result {
 	}
 
 	get unresolvedDependencies():ResolvedDependency[] {
-		var list:ResolvedDependency[] = [];
+		let list:ResolvedDependency[] = [];
 
-		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
+		let loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
 			Object.keys(deps).map(depName => {
-				var dep = deps[depName];
+				let dep = deps[depName];
 				list.push(dep);
 				loop(dep.dependencies);
 			});
@@ -172,12 +172,12 @@ class Result {
 	}
 
 	get dependenciesList():ResolvedDependency[] {
-		var list:ResolvedDependency[] = [];
+		let list:ResolvedDependency[] = [];
 
-		var loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
+		let loop = (deps:{[depName: string]: ResolvedDependency;} = {}) => {
 			Object.keys(deps).map(depName => {
 				if (list.filter(dep => dep.depName === depName).length === 0) {
-					var dep = deps[depName];
+					let dep = deps[depName];
 					list.push(dep);
 					loop(dep.dependencies);
 				}
@@ -189,9 +189,9 @@ class Result {
 	}
 
 	toJSON():any {
-		var obj:any = {};
-		var self:any = this;
-		for (var key in self) {
+		let obj:any = {};
+		let self:any = this;
+		for (let key in self) {
 			switch (key) {
 				case "dependencies":
 					obj[key] = self[key];
@@ -201,5 +201,3 @@ class Result {
 		return obj;
 	}
 }
-
-export = Result;

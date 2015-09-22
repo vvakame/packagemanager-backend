@@ -1,11 +1,11 @@
 "use strict";
 
-import fsgit = require("fs-git");
-import Repo = require("./repo");
-import Result = require("./result");
-import ResolvedDependency = require("./resolvedDependency");
+import * as fsgit from "fs-git";
+import Repo from "./repo";
+import Result from "./result";
+import ResolvedDependency from "./resolvedDependency";
 
-import m = require("./model");
+import * as m from "./model";
 
 export interface ManagerOptions {
 	rootDir: string;

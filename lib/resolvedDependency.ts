@@ -1,11 +1,11 @@
 "use strict";
 
-import fsgit = require("fs-git");
+import * as fsgit from "fs-git";
 
-import m = require("./model");
-import Repo = require("./repo");
+import * as m from "./model";
+import Repo from "./repo";
 
-class ResolvedDependency {
+export default class ResolvedDependency {
 	repo:string;
 	ref:string;
 	path:string;
@@ -45,10 +45,10 @@ class ResolvedDependency {
 	}
 
 	toJSON():any {
-		var obj:any = {};
-		var self:any = this;
+		let obj:any = {};
+		let self:any = this;
 		obj["depth"] = self["depth"];
-		for (var key in self) {
+		for (let key in self) {
 			switch (key) {
 				case "content":
 				case "parent":
@@ -64,5 +64,3 @@ class ResolvedDependency {
 		return obj;
 	}
 }
-
-export = ResolvedDependency;
