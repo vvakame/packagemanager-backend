@@ -1,3 +1,5 @@
+"use strict";
+
 import url = require("url");
 import fs = require("fs");
 import path = require("path");
@@ -82,7 +84,7 @@ class Repo {
 
 	fetchIfNotInitialized():Promise<Repo> {
 		if (!this.targetDir) {
-			return Promise.reject(new Error());
+			return Promise.reject<Repo>(new Error());
 		}
 		if (fs.existsSync(this.targetDir)) {
 			return Promise.resolve(this);

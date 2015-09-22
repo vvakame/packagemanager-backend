@@ -1,11 +1,4 @@
-/// <reference path="../node_modules/fs-git/fs-git.d.ts" />
-
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
-/// <reference path="../typings/mkdirp/mkdirp.d.ts" />
-/// <reference path="../typings/minimatch/minimatch.d.ts" />
-
-// if you use Node.js 0.10, you need exec `require("es6-promise").polyfill();`
+"use strict";
 
 export import Manager = require("./manager");
 export import Repo = require("./repo");

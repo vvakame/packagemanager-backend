@@ -1,3 +1,5 @@
+"use strict";
+
 import Manager = require("../lib/manager");
 
 import path = require("path");

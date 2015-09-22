@@ -1,3 +1,5 @@
+"use strict";
+
 import fsgit = require("fs-git");
 
 import m = require("./model");

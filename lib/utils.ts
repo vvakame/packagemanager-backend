@@ -1,3 +1,5 @@
+"use strict";
+
 export function homeDir():string {
 	"use strict";
 

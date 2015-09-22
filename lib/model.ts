@@ -1,3 +1,5 @@
+"use strict";
+
 import fsgit = require("fs-git");
 import Repo = require("./repo");
 import Result = require("./result");

@@ -1,3 +1,5 @@
+"use strict";
+
 import fs = require("fs");
 import path = require("path");
 import minimatch = require("minimatch");
@@ -91,8 +93,8 @@ class Manager<T> {
 			opts.globPatterns.forEach(pattern=> {
 				var exclusion = pattern.indexOf("!") === 0;
 				var match = minimatch.filter(exclusion ? pattern.substr(1) : pattern);
-				resultList.forEach(result => {
-					if (match(result.fileInfo.path)) {
+				resultList.forEach((result, i, ary) => {
+					if (match(result.fileInfo.path, i, null)) {
 						var index = filteredList.indexOf(result);
 						if (!exclusion && index === -1) {
 							filteredList.push(result);
