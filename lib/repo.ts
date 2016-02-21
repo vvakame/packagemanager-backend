@@ -65,7 +65,7 @@ export default class Repo {
         let targetPath: string;
 
         if (this.urlInfo) {
-            // e.g. https://github.com/borisyankov/DefinitelyTyped.git
+            // e.g. https://github.com/DefinitelyTyped/DefinitelyTyped.git
             targetHost = this.urlInfo.host;
             targetPath = this.urlInfo.path.substr(1);
         } else if (this.sshInfo) {

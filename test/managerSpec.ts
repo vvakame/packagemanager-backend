@@ -54,7 +54,7 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
                     }]
                 })
                 .then(manager => {
@@ -76,7 +76,7 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
                     }]
                 })
                 .then(manager => {
@@ -102,7 +102,7 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
                     }]
                 })
                 .then(manager => {
@@ -131,7 +131,7 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
                     }]
                 })
                 .then(manager => {
@@ -152,7 +152,7 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/borisyankov/DefinitelyTyped.git"
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
                     }]
                 })
                 .then(manager => {
@@ -176,7 +176,7 @@ describe("Manager", () => {
                 })
                 .then(manager => {
                     return manager.getByRecipe({
-                        baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+                        baseRepo: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
                         baseRef: "master",
                         path: "typings",
                         dependencies: {
@@ -196,7 +196,7 @@ describe("Manager", () => {
                     assert(Object.keys(result.recipe.dependencies).length === 2);
 
                     assert(result.recipe.dependencies["node/node.d.ts"].ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd");
-                    assert(result.recipe.dependencies["node/node.d.ts"].repo === "https://github.com/borisyankov/DefinitelyTyped.git");
+                    assert(result.recipe.dependencies["node/node.d.ts"].repo === "https://github.com/DefinitelyTyped/DefinitelyTyped.git");
                     assert(result.recipe.dependencies["node/node.d.ts"].path === "node/node.d.ts");
 
                     assert(result.recipe.dependencies["gapi/discovery-v1-nodejs.d.ts"].ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
@@ -226,7 +226,7 @@ describe("Manager", () => {
                 })
                 .then(manager => {
                     return manager.getByRecipe({
-                        baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+                        baseRepo: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
                         baseRef: "master",
                         path: "typings",
                         dependencies: {
@@ -299,7 +299,7 @@ describe("Manager", () => {
                 })
                 .then(manager => {
                     return manager.getByRecipe({
-                        baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+                        baseRepo: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
                         baseRef: "master",
                         path: "typings",
                         dependencies: {
@@ -337,7 +337,7 @@ describe("Manager", () => {
                 })
                 .then(manager => {
                     return manager.getByRecipe({
-                        baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+                        baseRepo: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
                         baseRef: "master",
                         path: "typings",
                         dependencies: {
@@ -364,7 +364,7 @@ describe("Manager", () => {
                 })
                 .then(manager => {
                     return manager.getByRecipe({
-                        baseRepo: "https://github.com/borisyankov/DefinitelyTyped.git",
+                        baseRepo: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
                         baseRef: "master",
                         path: "typings",
                         dependencies: {
