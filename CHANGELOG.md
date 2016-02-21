@@ -1,3 +1,14 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/vvakame/packagemanager-backend/compare/0.7.0...v1.0.0) (2016-02-21)
+
+
+### Features
+
+* **ci:** update node.js version 4.3 in CI ([2df22f7](https://github.com/vvakame/packagemanager-backend/commit/2df22f7))
+* **packagemanager-backend:** change borisyankov/DefinitelyTyped to DefinitelyTyped/DefinitelyTyped ([60fa05f](https://github.com/vvakame/packagemanager-backend/commit/60fa05f))
+
+
+
 <a name="0.7.0"></a>
 # [0.7.0](https://github.com/vvakame/packagemanager-backend/compare/0.6.5...v0.7.0) (2015-09-22)
 
@@ -107,4 +118,3 @@
 
 * **deps:** add grunt-conventional-changelog ([0ae9a906](https://github.com/vvakame/packagemanager-backend/commit/0ae9a90631bd67009e04996a754c0cdf084dbdcf))
 * **packagemanager-backend:** add fileInfo: fsgit.FileInfo to DepResult ([c9e50458](https://github.com/vvakame/packagemanager-backend/commit/c9e50458d471a87d429a029901ddf0722a507498))
-
