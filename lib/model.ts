@@ -1,5 +1,3 @@
-"use strict";
-
 import * as fsgit from "fs-git";
 import Repo from "./repo";
 import Result from "./result";

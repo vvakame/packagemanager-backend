@@ -1,14 +1,8 @@
-"use strict";
-
 export function homeDir(): string {
-    "use strict";
-
     return process.env.HOME || process.env.USERPROFILE;
 }
 
-export function deepClone(obj: any) {
-    "use strict";
-
+export function deepClone(obj: any): any {
     if (obj == null) {
         return obj;
     } else if (Array.isArray(obj)) {
@@ -17,7 +11,7 @@ export function deepClone(obj: any) {
         return obj;
     } else if (typeof obj === "object") {
         let cloned: any = {};
-        Object.keys(obj).forEach(key=> cloned[key] = deepClone(obj[key]));
+        Object.keys(obj).forEach(key => cloned[key] = deepClone(obj[key]));
         return cloned;
     } else {
         return obj;

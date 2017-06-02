@@ -1,5 +1,3 @@
-"use strict";
-
 import * as fs from "fs";
 import * as path from "path";
 import * as minimatch from "minimatch";
@@ -70,16 +68,16 @@ export default class Manager<T> {
             opts.globPatterns.unshift(opts.globPattern);
         }
 
-        return Promise.resolve(this.repos).then(repos=> {
+        return Promise.resolve(this.repos).then(repos => {
             let resultList: m.SearchResult[] = [];
-            let promises = repos.map(repo=> {
+            let promises = repos.map(repo => {
                 return repo.open()
-                    .then(fs=> fs.fileList())
+                    .then(fs => fs.fileList())
                     .then(fileList => {
                         fileList.forEach(fileInfo => {
                             resultList.push({
                                 repo: repo,
-                                fileInfo: fileInfo
+                                fileInfo: fileInfo,
                             });
                         });
                     });
@@ -90,7 +88,7 @@ export default class Manager<T> {
                 return resultList;
             }
             let filteredList: m.SearchResult[] = [];
-            opts.globPatterns.forEach(pattern=> {
+            opts.globPatterns.forEach(pattern => {
                 let exclusion = pattern.indexOf("!") === 0;
                 let match = minimatch.filter(exclusion ? pattern.substr(1) : pattern);
                 resultList.forEach((result, i, ary) => {

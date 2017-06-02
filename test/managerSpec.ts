@@ -1,5 +1,3 @@
-"use strict";
-
 import Manager from "../lib/manager";
 
 import * as path from "path";
@@ -15,7 +13,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     assert(fs.statSync(rootDir).isDirectory());
@@ -29,8 +27,8 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "git@github.com:vvakame/fs-git.git"
-                    }]
+                        url: "git@github.com:vvakame/fs-git.git",
+                    }],
                 })
                 .then(manager => {
                     return manager.fetchAllRepos();
@@ -39,8 +37,8 @@ describe("Manager", () => {
                     let repo = manager.repos[0];
                     assert(!!repo);
 
-                    return repo.open("master").then(fs=> {
-                        return fs.readFile("README.md", { encoding: "utf8" }).then(content=> {
+                    return repo.open("master").then(fs => {
+                        return fs.readFile("README.md", { encoding: "utf8" }).then(content => {
                             assert(typeof content === "string");
                         });
                     });
@@ -54,8 +52,8 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
-                    }]
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+                    }],
                 })
                 .then(manager => {
                     return manager
@@ -76,13 +74,13 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
-                    }]
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+                    }],
                 })
                 .then(manager => {
                     return manager
                         .search({
-                            globPattern: "**/*.d.ts"
+                            globPattern: "**/*.d.ts",
                         })
                         .then(resultList => {
                             assert(resultList.length !== 0);
@@ -102,16 +100,16 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
-                    }]
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+                    }],
                 })
                 .then(manager => {
                     return manager
                         .search({
                             globPatterns: [
                                 "**/*.ts",
-                                "!**/*.d.ts"
-                            ]
+                                "!**/*.d.ts",
+                            ],
                         })
                         .then(resultList => {
                             assert(resultList.length !== 0);
@@ -131,13 +129,13 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
-                    }]
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+                    }],
                 })
                 .then(manager => {
                     return manager
                         .search({
-                            regexpPattern: /atom/
+                            regexpPattern: /atom/,
                         })
                         .then(resultList => {
                             assert(resultList.length !== 0);
@@ -152,13 +150,13 @@ describe("Manager", () => {
                 .createManager({
                     rootDir: rootDir,
                     repos: [{
-                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
-                    }]
+                        url: "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+                    }],
                 })
                 .then(manager => {
                     return manager
                         .search({
-                            filter: result => result.fileInfo.path === "atom/atom.d.ts"
+                            filter: result => result.fileInfo.path === "atom/atom.d.ts",
                         })
                         .then(resultList => {
                             assert(resultList.length === 1);
@@ -172,7 +170,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     return manager.getByRecipe({
@@ -181,14 +179,14 @@ describe("Manager", () => {
                         path: "typings",
                         dependencies: {
                             "node/node.d.ts": {
-                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
                             },
                             "gapi/discovery-v1-nodejs.d.ts": {
                                 repo: "https://github.com/vvakame/gapidts.git",
                                 ref: "8311d2e889b5a6637ebe092012cd647c44a8f6f4",
-                                path: "test/valid/discovery-v1-nodejs.d.ts"
-                            }
-                        }
+                                path: "test/valid/discovery-v1-nodejs.d.ts",
+                            },
+                        },
                     });
                 })
                 .then(result => {
@@ -206,14 +204,14 @@ describe("Manager", () => {
                     assert(result.dependencies);
                     assert(Object.keys(result.dependencies).length === 2);
                     assert(Object.keys(result.dependencies).every(depName => !result.dependencies[depName].error));
-                    Object.keys(result.dependencies).forEach(depName=> {
+                    Object.keys(result.dependencies).forEach(depName => {
                         let dep = result.dependencies[depName];
                         assert(dep.repo);
                         // assert(dep.repo.networkConnectivity); // offlineFirst
                         assert(dep.repoInstance.fetchError == null);
                         assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
                         assert(dep.fileInfo.type === "blob");
-                        assert(typeof dep.content === "string");
+                        assert(dep.content);
                     });
                 });
         });
@@ -222,7 +220,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     return manager.getByRecipe({
@@ -231,13 +229,13 @@ describe("Manager", () => {
                         path: "typings",
                         dependencies: {
                             "node/node.d.ts": {
-                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
                             },
                             "gapi/discovery-v1-nodejs.d.ts": {
                                 repo: "https://github.com/vvakame/gapidts.git",
                                 ref: "8311d2e889b5a6637ebe092012cd647c44a8f6f4",
-                                path: "test/valid/discovery-v1-nodejs.d.ts"
-                            }
+                                path: "test/valid/discovery-v1-nodejs.d.ts",
+                            },
                         },
                         postProcessForDependency: (result, depResult, content) => {
                             let reference = /\/\/\/\s+<reference\s+path=["']([^"']*)["']\s*\/>/;
@@ -252,10 +250,10 @@ describe("Manager", () => {
                                     result.pushAdditionalDependency(obj.depName, {
                                         repo: depResult.repo,
                                         ref: depResult.ref,
-                                        path: obj.path
+                                        path: obj.path,
                                     });
                                 });
-                        }
+                        },
                     });
                 })
                 .then(result => {
@@ -286,7 +284,7 @@ describe("Manager", () => {
                         assert(!dep.error);
                         assert(dep.fileInfo.ref === "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd" || dep.fileInfo.ref === "8311d2e889b5a6637ebe092012cd647c44a8f6f4");
                         assert(dep.fileInfo.type === "blob");
-                        assert(typeof dep.content === "string");
+                        assert(dep.content);
                     });
                 });
         });
@@ -295,7 +293,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     return manager.getByRecipe({
@@ -304,11 +302,11 @@ describe("Manager", () => {
                         path: "typings",
                         dependencies: {
                             "node/node.d.ts": {
-                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
+                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
                             },
                             "noooooooooot-exists/noooooooooot-exists.d.ts": {
-                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
-                            }
+                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
+                            },
                         },
                         resolveMissingDependency: (result, dep) => {
                             if (dep.depName !== "noooooooooot-exists/noooooooooot-exists.d.ts") {
@@ -316,9 +314,9 @@ describe("Manager", () => {
                             }
                             return Promise.resolve({
                                 ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
-                                path: "express/express.d.ts"
+                                path: "express/express.d.ts",
                             });
-                        }
+                        },
                     });
                 })
                 .then(result => {
@@ -333,7 +331,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     return manager.getByRecipe({
@@ -342,12 +340,12 @@ describe("Manager", () => {
                         path: "typings",
                         dependencies: {
                             "noooooooooot-exists/noooooooooot-exists.d.ts": {
-                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
-                            }
+                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
+                            },
                         },
                         resolveMissingDependency: (result, dep) => {
                             return Promise.resolve(dep);
-                        }
+                        },
                     });
                 }).then(() => {
                     return Promise.reject("");
@@ -360,7 +358,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     return manager.getByRecipe({
@@ -369,16 +367,16 @@ describe("Manager", () => {
                         path: "typings",
                         dependencies: {
                             "node/node.d.ts": {
-                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd"
-                            }
+                                ref: "8b077e4f05910a405387f4fcfbe84e8b8f15d6bd",
+                            },
                         },
                         postProcessForDependency: (result, depResult, content) => {
                             result.pushAdditionalDependency("node/node.d.ts", {
                                 repo: depResult.repo,
                                 ref: depResult.ref,
-                                path: "node/node.d.ts"
+                                path: "node/node.d.ts",
                             });
-                        }
+                        },
                     });
                 })
                 .then(result => {
@@ -402,7 +400,7 @@ describe("Manager", () => {
             return Manager
                 .createManager({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     assert(!fs.existsSync(configPath));
@@ -426,7 +424,7 @@ describe("Manager", () => {
             return Manager
                 .createManager<any>({
                     rootDir: rootDir,
-                    repos: []
+                    repos: [],
                 })
                 .then(manager => {
                     let data = manager.loadConfig();

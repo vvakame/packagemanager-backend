@@ -1,5 +1,3 @@
-"use strict";
-
 import * as url from "url";
 import * as fs from "fs";
 import * as path from "path";
@@ -45,7 +43,7 @@ export default class Repo {
             this.sshInfo = {
                 user: matches[1],
                 hostname: matches[2],
-                path: matches[3]
+                path: matches[3],
             };
             return;
         }
@@ -109,7 +107,7 @@ export default class Repo {
             dns.resolve(hostname, err => {
                 this.networkConnectivity = !err;
                 if (this.networkConnectivity) {
-                    let command: string;
+                    let command: { base: string; args: string[]; };
                     if (fs.existsSync(this.targetDir)) {
                         command = this._buildCommand("fetch", "--all");
                     } else {
@@ -118,7 +116,7 @@ export default class Repo {
                         command = this._buildCommand("clone", "--mirror", this.spec.url, this.targetDir);
                     }
                     debug("exec command", command);
-                    child_process.exec(command, (error, stdout, stderr) => {
+                    child_process.execFile(command.base, command.args, { encoding: "buffer" }, (error, stdout, stderr) => {
                         this.fetchError = error ? stderr.toString("utf8") : null;
                         resolve(this);
                     });
@@ -135,13 +133,16 @@ export default class Repo {
         });
     }
 
-    _buildCommand(...args: string[]): string {
-        return "git --git-dir=" + this.targetDir + " " + args.join(" ");
+    _buildCommand(...args: string[]): { base: string; args: string[]; } {
+        return {
+            base: "git",
+            args: [`--git-dir=${this.targetDir}`, ...args],
+        };
     }
 
     open(ref: string = this.spec.ref): Promise<fsgit.FSGit> {
         ref = ref || "master";
-        return fsgit.open(this.targetDir, ref).catch(error=> {
+        return fsgit.open(this.targetDir, ref).catch(error => {
             if (this.alreadyTryFetchAll) {
                 return Promise.reject(error);
             } else {

@@ -1,5 +1,3 @@
-"use strict";
-
 import * as fsgit from "fs-git";
 
 import * as m from "./model";

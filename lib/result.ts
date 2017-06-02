@@ -1,5 +1,3 @@
-"use strict";
-
 import * as path from "path";
 
 import Manager from "./manager";
@@ -69,7 +67,7 @@ export default class Result {
         }
         return {
             depName: depName,
-            path: depPath
+            path: depPath,
         };
     }
 
@@ -82,7 +80,7 @@ export default class Result {
             if (!repo) {
                 repo = Repo.createRepo(this.manager.baseDir, {
                     url: dep.repo,
-                    ref: dep.ref
+                    ref: dep.ref,
                 });
                 this.manager.repos.push(repo);
                 repoPromises.push(repo.fetchIfNotInitialized());
@@ -97,11 +95,11 @@ export default class Result {
                 let promises = this
                     .unresolvedDependencies
                     .map(dep => {
-                        return dep.repoInstance.open(dep.ref).then(fs=> {
+                        return dep.repoInstance.open(dep.ref).then(fs => {
                             let info = fs.file(dep.path).then(fileInfo => {
                                 dep.fileInfo = fileInfo;
                             });
-                            let content = fs.readFile(dep.path).then(content=> {
+                            let content = fs.readFile(dep.path).then(content => {
                                 dep.content = content;
                                 this._current = dep;
                                 this.recipe.postProcessForDependency(this, dep, content);
@@ -152,8 +150,8 @@ export default class Result {
                     });
 
                 return Promise.all(promises).then(() => this.resolveDependencies());
-            }
-            );
+            },
+        );
     }
 
     get unresolvedDependencies(): ResolvedDependency[] {
