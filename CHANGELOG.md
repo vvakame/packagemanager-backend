@@ -1,3 +1,13 @@
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/vvakame/packagemanager-backend/compare/v1.0.0...v1.0.1) (2017-06-02)
+
+
+### Bug Fixes
+
+* **packagemanager-backend:** fix security issue & update dependencies ([b52c799](https://github.com/vvakame/packagemanager-backend/commit/b52c799))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/vvakame/packagemanager-backend/compare/0.7.0...v1.0.0) (2016-02-21)
 
